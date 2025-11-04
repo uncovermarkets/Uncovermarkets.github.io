@@ -6,6 +6,8 @@
     <title>Uncover Markets - Market Analysis & Insights</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1e3a8a">
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -242,9 +244,87 @@
         }
 
         .form-group input[type="checkbox"],
-        .form-group input[type="radio"] {
+        .form-group input[type="radio"],
+        .form-group input[type="file"] {
             width: auto;
             margin-right: 0.5rem;
+        }
+
+        /* Rich Text Editor */
+        .editor-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .ql-toolbar {
+            border-bottom: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+
+        .ql-container {
+            font-size: 1rem;
+            min-height: 300px;
+        }
+
+        .ql-editor {
+            padding: 1rem;
+        }
+
+        /* Image Upload */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.75rem;
+            background: #e9ecef;
+            border: 2px dashed #1e3a8a;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-input-label:hover {
+            background: #dee2e6;
+        }
+
+        .file-input-label.dragover {
+            background: #d1ecf1;
+            border-color: #0c5460;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: #28a745;
+            width: 0%;
+            transition: width 0.3s;
         }
 
         button[type="submit"], .btn-primary {
@@ -260,6 +340,11 @@
 
         button[type="submit"]:hover, .btn-primary:hover {
             background: #2c5ba9;
+        }
+
+        button[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
@@ -458,6 +543,40 @@
             margin-bottom: 1rem;
         }
 
+        /* Article Content Display */
+        .article-content {
+            line-height: 1.8;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .article-content h1, .article-content h2, .article-content h3 {
+            color: #1e3a8a;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-content strong {
+            color: #1e3a8a;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             nav .container {
@@ -485,6 +604,10 @@
             .user-actions {
                 margin-top: 1rem;
                 width: 100%;
+            }
+
+            .ql-container {
+                min-height: 200px;
             }
         }
     </style>
@@ -578,8 +701,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Article Content</label>
-                        <textarea id="article-content" placeholder="Write your article here..." required></textarea>
+                        <label>Article Content (with formatting)</label>
+                        <div id="article-editor" class="editor-container"></div>
                     </div>
                     <div class="form-group">
                         <label><strong>Access Level:</strong></label>
@@ -602,10 +725,6 @@
                             </label>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Featured Image (Upload or paste URL)</label>
-                        <input type="url" id="article-image" placeholder="https://example.com/image.jpg">
-                    </div>
                     <button type="submit">Publish Article</button>
                 </form>
             </div>
@@ -623,8 +742,9 @@
                         <textarea id="newsletter-description" placeholder="Enter newsletter description..." required></textarea>
                     </div>
                     <div class="form-group">
-                        <label>PDF File (URL or upload)</label>
-                        <input type="url" id="newsletter-pdf" placeholder="https://example.com/newsletter.pdf" required>
+                        <label>PDF File URL</label>
+                        <input type="url" id="newsletter-pdf-link" placeholder="https://example.com/newsletter.pdf" required>
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">Paste the URL of your PDF file (Google Drive, Dropbox, etc.)</small>
                     </div>
                     <div class="form-group">
                         <label><strong>Access Level:</strong></label>
@@ -647,7 +767,7 @@
                             </label>
                         </div>
                     </div>
-                    <button type="submit">Publish Newsletter</button>
+                    <button type="submit" id="publish-newsletter-btn">Publish Newsletter</button>
                 </form>
             </div>
 
@@ -747,10 +867,13 @@
         </div>
     </div>
 
+    <!-- Quill Rich Text Editor Library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
     <!-- Firebase SDK and Application Logic -->
     <script type="module">
         // ==========================================
-        // FIREBASE INITIALIZATION - DO NOT MODIFY
+        // FIREBASE INITIALIZATION
         // ==========================================
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { 
@@ -795,14 +918,64 @@
         window.auth = auth;
         window.db = db;
 
-        // Admin email - CHANGE THIS TO YOUR ADMIN EMAIL
+        // Admin email
         const ADMIN_EMAIL = 'uncover.markets@gmail.com';
         
         // Current user state
         let currentUser = null;
         let isAdmin = false;
-        let userLevel = 'free'; // 'free', 'subscriber', 'paid', 'admin'
+        let userLevel = 'free';
         let userData = null;
+
+        // Rich Text Editor instance
+        let quillEditor = null;
+
+        // ==========================================
+        // INITIALIZE QUILL EDITOR
+        // ==========================================
+        function initializeQuillEditor() {
+            if (!quillEditor) {
+                quillEditor = new Quill('#article-editor', {
+                    theme: 'snow',
+                    placeholder: 'Write your article here... You can format text, add links, and insert images!',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'image'],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                // Handle image insertion
+                const imageHandler = () => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
+                    input.click();
+
+                    input.onchange = async () => {
+                        const file = input.files[0];
+                        if (file) {
+                            // Convert image to data URL
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const range = quillEditor.getSelection();
+                                quillEditor.insertEmbed(range.index, 'image', e.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    };
+                };
+
+                // Override image handler
+                quillEditor.getModule('toolbar').addHandler('image', imageHandler);
+            }
+        }
 
         // ==========================================
         // AUTH STATE OBSERVER
@@ -812,7 +985,6 @@
             isAdmin = user && user.email === ADMIN_EMAIL;
             
             if (user) {
-                // Get user data from Firestore
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (userDoc.exists()) {
                     userData = userDoc.data();
@@ -982,12 +1154,11 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                // Store user data with default subscription level
                 await setDoc(doc(db, 'users', userCredential.user.uid), {
                     name: name,
                     email: email,
                     phone: phone,
-                    subscriptionLevel: 'subscriber', // Default: registered subscriber
+                    subscriptionLevel: 'subscriber',
                     registeredAt: new Date().toISOString(),
                     approvedAt: null
                 });
@@ -1071,6 +1242,13 @@
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
 
+            // Initialize Quill editor when Add Article tab is opened
+            if (tabName === 'add-article') {
+                setTimeout(() => {
+                    initializeQuillEditor();
+                }, 100);
+            }
+
             if (tabName === 'manage-users') {
                 loadUsers();
             } else if (tabName === 'manage-content') {
@@ -1112,7 +1290,7 @@
                             ${getAccessBadgeHTML(accessLevel)}
                             <div class="article-meta">📰 ${article.category} | ${new Date(article.createdAt).toLocaleDateString()}</div>
                             <h3>${article.title}</h3>
-                            <p>${article.content.substring(0, 100)}...</p>
+                            <p>${article.preview || 'Click to read full article'}</p>
                             ${!hasAccess ? getLockedOverlayHTML(accessLevel) : ''}
                         </div>
                     `;
@@ -1149,7 +1327,7 @@
                             ${getAccessBadgeHTML(accessLevel)}
                             <div class="article-meta">📰 ${article.category} | ${new Date(article.createdAt).toLocaleDateString()}</div>
                             <h3>${article.title}</h3>
-                            <p>${article.content.substring(0, 150)}...</p>
+                            <p>${article.preview || 'Click to read full article'}</p>
                             ${!hasAccess ? getLockedOverlayHTML(accessLevel) : ''}
                         </div>
                     `;
@@ -1245,8 +1423,7 @@
                     articleView.innerHTML = `
                         <h2>${article.title}</h2>
                         <div class="article-meta"><strong>Category:</strong> ${article.category}<br><strong>Date:</strong> ${new Date(article.createdAt).toLocaleDateString()}</div>
-                        ${article.imageUrl ? `<img src="${article.imageUrl}" alt="${article.title}" style="max-width:100%; margin: 1rem 0;">` : ''}
-                        <p style="white-space: pre-wrap;">${article.content}</p>
+                        <div class="article-content">${article.content}</div>
                     `;
                     
                     openModal('article-modal');
@@ -1429,23 +1606,26 @@
 
             const title = document.getElementById('article-title').value;
             const category = document.getElementById('article-category').value;
-            const content = document.getElementById('article-content').value;
+            const content = quillEditor.root.innerHTML;
             const accessLevel = document.querySelector('input[name="article-access"]:checked').value;
-            const imageUrl = document.getElementById('article-image').value;
+
+            // Extract plain text for preview (max 150 chars)
+            const plainText = quillEditor.getText().substring(0, 150);
 
             try {
                 await addDoc(collection(db, 'articles'), {
                     title,
                     category,
                     content,
+                    preview: plainText,
                     accessLevel,
-                    imageUrl,
                     createdAt: Date.now(),
                     author: currentUser.email
                 });
 
                 alert('Article published successfully!');
                 e.target.reset();
+                quillEditor.setContents([]);
                 loadHomeArticles();
             } catch (error) {
                 console.error('Error adding article:', error);
@@ -1463,7 +1643,7 @@
 
             const title = document.getElementById('newsletter-title').value;
             const description = document.getElementById('newsletter-description').value;
-            const pdfUrl = document.getElementById('newsletter-pdf').value;
+            const pdfUrl = document.getElementById('newsletter-pdf-link').value;
             const accessLevel = document.querySelector('input[name="newsletter-access"]:checked').value;
 
             try {
