@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uncovermarkets-v5'; // Updated version with Firebase Storage upload
+const CACHE_NAME = 'uncovermarkets-v4'; // Updated version for 3-tier access system
 const urlsToCache = [
     '/',
     '/index.html',
