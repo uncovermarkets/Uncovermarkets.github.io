@@ -1,14 +1,32 @@
-const CACHE_NAME = 'uncovermarkets-v4'; // Updated version for 3-tier access system
+const CACHE_NAME = 'uncovermarkets-v6'; // Updated version with Quill rich text editor support
 const urlsToCache = [
     '/',
     '/index.html',
-    '/manifest.json'
+    '/manifest.json',
+    // Quill Rich Text Editor CSS and JS
+    'https://cdn.quilljs.com/1.3.6/quill.snow.css',
+    'https://cdn.quilljs.com/1.3.6/quill.js'
 ];
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(urlsToCache))
+            .then(cache => {
+                // Cache local files (required)
+                cache.addAll([
+                    '/',
+                    '/index.html',
+                    '/manifest.json'
+                ]);
+                
+                // Cache external CDN files (optional - won't block install)
+                cache.addAll([
+                    'https://cdn.quilljs.com/1.3.6/quill.snow.css',
+                    'https://cdn.quilljs.com/1.3.6/quill.js'
+                ]).catch(() => {
+                    console.log('CDN files may not be available offline, but app will work with online CDN');
+                });
+            })
             .then(() => self.skipWaiting())
     );
 });
@@ -29,28 +47,43 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+    // Skip non-GET requests
+    if (event.request.method !== 'GET') {
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request)
             .then(response => {
+                // Return cached response if available
                 if (response) {
                     return response;
                 }
                 
                 return fetch(event.request)
                     .then(response => {
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                        // Don't cache invalid responses
+                        if (!response || response.status !== 200 || response.type === 'error') {
                             return response;
                         }
                         
-                        const responseToCache = response.clone();
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
+                        // Don't cache responses from outside origins (like CDN)
+                        // but do try to cache Firebase calls
+                        if (response.type === 'basic' || response.type === 'cors') {
+                            const responseToCache = response.clone();
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    cache.put(event.request, responseToCache);
+                                })
+                                .catch(() => {
+                                    // Silently fail if cache write fails
+                                });
+                        }
                         
                         return response;
                     })
                     .catch(() => {
+                        // Return cached page if offline
                         return caches.match('/index.html');
                     });
             })
