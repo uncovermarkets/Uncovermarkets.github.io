@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uncovermarkets-v3'; // Updated version - IMPORTANT: Change this when you update files
+const CACHE_NAME = 'uncovermarkets-v4'; // Updated version for 3-tier access system
 const urlsToCache = [
     '/',
     '/index.html',
