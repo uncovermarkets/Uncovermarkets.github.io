@@ -252,7 +252,7 @@
         .toggle-tabs {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             border-bottom: 2px solid #ddd;
         }
 
@@ -749,7 +749,7 @@
                     <div id="pdf-link-option" class="toggle-content hidden">
                         <div class="form-group">
                             <label>PDF File URL</label>
-                            <input type="url" id="newsletter-pdf-link" placeholder="https://example.com/newsletter.pdf">
+                            <input type="url" id="newsletter-pdf-link" placeholder="https://example.com/newsletter.pdf" required>
                             <small style="color: #666; margin-top: 0.5rem; display: block;">Paste the URL of your PDF file (Google Drive, Dropbox, etc.)</small>
                         </div>
                     </div>
@@ -878,7 +878,7 @@
     <!-- Firebase SDK and Application Logic -->
     <script type="module">
         // ==========================================
-        // FIREBASE INITIALIZATION - DO NOT MODIFY
+        // FIREBASE INITIALIZATION
         // ==========================================
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { 
@@ -942,7 +942,7 @@
         let userData = null;
 
         // PDF source selection
-        let selectedPdfSource = 'upload'; // 'upload' or 'link'
+        let selectedPdfSource = 'upload';
         let selectedPdfFile = null;
 
         // ==========================================
@@ -956,8 +956,19 @@
             event.target.classList.add('active');
             
             // Toggle content visibility
-            document.getElementById('pdf-upload-option').classList.toggle('hidden', source !== 'upload');
-            document.getElementById('pdf-link-option').classList.toggle('hidden', source !== 'link');
+            if (source === 'upload') {
+                document.getElementById('pdf-upload-option').classList.remove('hidden');
+                document.getElementById('pdf-upload-option').classList.add('active');
+                document.getElementById('pdf-link-option').classList.add('hidden');
+                document.getElementById('pdf-link-option').classList.remove('active');
+                document.getElementById('newsletter-pdf-link').removeAttribute('required');
+            } else {
+                document.getElementById('pdf-upload-option').classList.add('hidden');
+                document.getElementById('pdf-upload-option').classList.remove('active');
+                document.getElementById('pdf-link-option').classList.remove('hidden');
+                document.getElementById('pdf-link-option').classList.add('active');
+                document.getElementById('newsletter-pdf-link').setAttribute('required', 'required');
+            }
             
             // Reset selections
             if (source === 'upload') {
@@ -1029,12 +1040,18 @@
                     },
                     (error) => {
                         pdfProgress.classList.add('hidden');
+                        console.error('Upload error:', error);
                         reject(error);
                     },
                     async () => {
-                        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                        pdfProgress.classList.add('hidden');
-                        resolve(downloadUrl);
+                        try {
+                            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            pdfProgress.classList.add('hidden');
+                            resolve(downloadUrl);
+                        } catch (error) {
+                            console.error('Error getting download URL:', error);
+                            reject(error);
+                        }
                     }
                 );
             });
