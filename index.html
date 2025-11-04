@@ -6,7 +6,6 @@
     <title>Uncover Markets - Market Analysis & Insights</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1e3a8a">
-    <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         * {
@@ -28,21 +27,27 @@
             padding: 0 20px;
         }
 
-        /* Flash Message (Scrolling Banner) - MOBILE OPTIMIZED */
+        /* ========================================
+           FLASH MESSAGE - MOBILE OPTIMIZED
+           ======================================== */
         .flash-message-display {
             position: fixed;
-            top: 60px;
             left: 0;
             right: 0;
             height: 50px;
             background: #1e3a8a;
             color: white;
-            display: flex;
+            display: none;
             align-items: center;
             overflow: hidden;
-            z-index: 999;
+            z-index: 900;
             font-size: 16px;
-            transition: top 0.3s ease;
+            top: 0;
+            transition: all 0.3s ease;
+        }
+
+        .flash-message-display.active {
+            display: flex;
         }
 
         .flash-message-display.hidden {
@@ -81,19 +86,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         .flash-message-close:hover {
             background: rgba(255,255,255,0.4);
         }
 
-        .flash-message-close:active {
-            background: rgba(255,255,255,0.5);
-        }
-
-        /* Navigation */
+        /* ========================================
+           NAVIGATION - WITH HAMBURGER MENU
+           ======================================== */
         nav {
             background: #1e3a8a;
             color: white;
@@ -115,52 +116,102 @@
             font-size: 1.5rem;
         }
 
+        .hamburger-menu {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger-menu.active {
+            display: block;
+        }
+
+        #nav-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        #nav-buttons > div {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
         nav button, nav a {
             background: transparent;
             border: 1px solid white;
             color: white;
             padding: 0.5rem 1rem;
-            margin-left: 0.5rem;
             cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
             font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         nav button:hover, nav a:hover {
             background: rgba(255,255,255,0.1);
         }
 
-        /* User Badge */
+        /* Mobile Dropdown Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 0;
+            background: #1e3a8a;
+            width: 100%;
+            flex-direction: column;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            z-index: 999;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a,
+        .mobile-menu button {
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
         .user-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: bold;
-            margin-left: 0.5rem;
+            margin: 0 0.5rem;
         }
 
-        .badge-free {
-            background: #6c757d;
-            color: white;
-        }
-
-        .badge-subscriber {
-            background: #28a745;
-            color: white;
-        }
-
-        .badge-paid {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .badge-admin {
-            background: #dc3545;
-            color: white;
-        }
+        .badge-free { background: #6c757d; color: white; }
+        .badge-subscriber { background: #28a745; color: white; }
+        .badge-paid { background: #ffc107; color: #000; }
+        .badge-admin { background: #dc3545; color: white; }
 
         /* Hero Section */
         .hero {
@@ -180,7 +231,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Sections */
         section {
             padding: 2rem 0;
         }
@@ -191,7 +241,6 @@
             color: #1e3a8a;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 8px;
@@ -228,7 +277,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Access Level Badges on Cards */
         .access-badge {
             position: absolute;
             top: 10px;
@@ -239,22 +287,10 @@
             font-weight: bold;
         }
 
-        .access-free {
-            background: #e9ecef;
-            color: #495057;
-        }
+        .access-free { background: #e9ecef; color: #495057; }
+        .access-subscriber { background: #d4edda; color: #155724; }
+        .access-paid { background: #fff3cd; color: #856404; }
 
-        .access-subscriber {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .access-paid {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        /* Locked Content */
         .locked-overlay {
             position: absolute;
             top: 0;
@@ -282,7 +318,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Forms */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -322,7 +357,6 @@
             cursor: pointer;
         }
 
-        /* Rich Text Editor */
         .editor-container {
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -344,7 +378,6 @@
             padding: 1rem;
         }
 
-        /* File Upload */
         .file-input-wrapper {
             position: relative;
             overflow: hidden;
@@ -464,7 +497,6 @@
             text-decoration: underline;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -499,12 +531,10 @@
             color: #666;
         }
 
-        /* Hidden elements */
         .hidden {
             display: none !important;
         }
 
-        /* About section */
         .about-section {
             background: white;
             padding: 2rem;
@@ -525,7 +555,6 @@
             margin: 1rem 0;
         }
 
-        /* Admin Panel Tabs */
         .admin-tabs {
             display: flex;
             gap: 1rem;
@@ -555,7 +584,6 @@
             display: block;
         }
 
-        /* User management */
         .user-card {
             background: #f8f9fa;
             padding: 1rem;
@@ -576,7 +604,6 @@
             gap: 0.5rem;
         }
 
-        /* Alert/Message */
         .alert {
             padding: 1rem;
             border-radius: 4px;
@@ -607,7 +634,6 @@
             border: 1px solid #ffeaa7;
         }
 
-        /* Subscription Notice */
         .subscription-notice {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -622,7 +648,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Article Content Display */
         .article-content {
             line-height: 1.8;
         }
@@ -656,7 +681,6 @@
             color: #1e3a8a;
         }
 
-        /* Color preview */
         .color-preview {
             display: inline-block;
             width: 30px;
@@ -667,11 +691,28 @@
             border: 2px solid #ddd;
         }
 
-        /* Mobile Responsive */
+        /* ========================================
+           MOBILE RESPONSIVE
+           ======================================== */
         @media (max-width: 768px) {
             nav .container {
-                flex-direction: column;
-                gap: 1rem;
+                justify-content: space-between;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            #nav-buttons {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: none;
+            }
+
+            .mobile-menu.active {
+                display: flex;
             }
 
             .hero h2 {
@@ -700,21 +741,21 @@
                 min-height: 200px;
             }
 
-            /* MOBILE FLASH MESSAGE FIX */
             .flash-message-display {
                 height: 45px;
-                font-size: 14px;
-                top: 50px;
+                font-size: 13px;
             }
 
             .flash-message-content {
-                font-size: 14px;
+                font-size: 13px;
             }
 
             .flash-message-close {
-                right: 10px;
-                padding: 3px 8px;
-                font-size: 18px;
+                right: 8px;
+                padding: 2px 6px;
+                font-size: 16px;
+                min-width: 36px;
+                min-height: 36px;
             }
         }
 
@@ -731,24 +772,21 @@
                 font-size: 1.2rem;
             }
 
-            /* MOBILE FLASH MESSAGE FIX - SMALL SCREENS */
             .flash-message-display {
                 height: 40px;
                 font-size: 12px;
-                top: 45px;
             }
 
             .flash-message-content {
                 font-size: 12px;
-                padding-left: 100%;
             }
 
             .flash-message-close {
-                right: 8px;
-                padding: 2px 6px;
-                font-size: 16px;
-                min-width: 40px;
-                min-height: 40px;
+                right: 6px;
+                padding: 1px 4px;
+                font-size: 14px;
+                min-width: 32px;
+                min-height: 32px;
             }
 
             .card {
@@ -767,8 +805,8 @@
     </style>
 </head>
 <body>
-    <!-- Flash Message Display - MOBILE OPTIMIZED -->
-    <div id="flash-message" class="flash-message-display hidden">
+    <!-- Flash Message Display -->
+    <div id="flash-message" class="flash-message-display">
         <div class="flash-message-content" id="flash-content"></div>
         <button class="flash-message-close" onclick="closeFlashMessage()">×</button>
     </div>
@@ -777,9 +815,13 @@
     <nav id="nav-element">
         <div class="container">
             <h1>📊 Uncover Markets</h1>
+            <button class="hamburger-menu" id="hamburger-btn" onclick="toggleMobileMenu()">☰</button>
             <div id="nav-buttons"></div>
         </div>
     </nav>
+
+    <!-- Mobile Menu (Dropdown) -->
+    <div id="mobile-menu" class="mobile-menu"></div>
 
     <!-- Hero Section -->
     <div class="hero">
@@ -791,7 +833,7 @@
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Subscription Notice (for non-paid users) -->
+        <!-- Subscription Notice -->
         <div id="subscription-notice" class="subscription-notice hidden">
             <div class="locked-icon">🔒</div>
             <h3>Upgrade to Paid Subscription</h3>
@@ -818,23 +860,22 @@
             <div id="home-articles-list" class="card-grid"></div>
         </section>
 
-        <!-- All Articles Section (Hidden by default) -->
+        <!-- All Articles Section -->
         <section id="articles-section" class="hidden">
             <h2 class="section-title">All Articles</h2>
             <div id="articles-list" class="card-grid"></div>
         </section>
 
-        <!-- Newsletters Section (Hidden by default) -->
+        <!-- Newsletters Section -->
         <section id="newsletters-section" class="hidden">
             <h2 class="section-title">Newsletters</h2>
             <div id="newsletters-list" class="card-grid"></div>
         </section>
 
-        <!-- Admin Panel (Hidden by default) -->
+        <!-- Admin Panel -->
         <section id="admin-section" class="hidden">
             <h2 class="section-title">Admin Panel</h2>
             
-            <!-- Admin Tabs -->
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="showAdminTab('add-article')">Add Article</button>
                 <button class="admin-tab" onclick="showAdminTab('add-newsletter')">Add Newsletter</button>
@@ -930,7 +971,7 @@
                             </label>
                         </div>
                     </div>
-                    <button type="submit" id="publish-newsletter-btn">Publish Newsletter</button>
+                    <button type="submit">Publish Newsletter</button>
                 </form>
             </div>
 
@@ -964,44 +1005,35 @@
                     <div class="form-group">
                         <label>Message Text</label>
                         <input type="text" id="flash-text" placeholder="Enter your message" required>
-                        <small style="color: #666; margin-top: 0.5rem; display: block;">Text that scrolls across the top</small>
                     </div>
-
                     <div class="form-group">
                         <label>Text Size (pixels)</label>
                         <input type="number" id="flash-size" min="10" max="50" value="16">
                     </div>
-
                     <div class="form-group">
                         <label>Scroll Speed (seconds)</label>
                         <input type="number" id="flash-speed" min="5" max="60" value="10" step="1">
-                        <small style="color: #666; margin-top: 0.5rem; display: block;">How long to complete one scroll (5-60 seconds)</small>
                     </div>
-
                     <div class="form-group">
                         <label>Text Color</label>
                         <input type="color" id="flash-color" value="#ffffff">
                         <div class="color-preview" id="text-color-preview" style="background: #ffffff;"></div>
                     </div>
-
                     <div class="form-group">
                         <label>Background Color</label>
                         <input type="color" id="flash-bg-color" value="#1e3a8a">
                         <div class="color-preview" id="bg-color-preview" style="background: #1e3a8a;"></div>
                     </div>
-
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="flash-enabled" checked>
                             Enable Flash Message
                         </label>
                     </div>
-
                     <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
                         <strong>Preview:</strong>
                         <div id="flash-preview" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px; overflow: hidden; height: 50px; display: flex; align-items: center;"></div>
                     </div>
-
                     <button type="submit" style="margin-top: 1rem;">Save Flash Message</button>
                     <button type="button" class="btn-secondary" onclick="deleteFlashMessage()" style="width: auto; margin-top: 1rem;">Delete Message</button>
                 </form>
@@ -1022,11 +1054,6 @@
             <!-- Manage Users Tab -->
             <div id="manage-users-tab" class="admin-content card">
                 <h3>Manage Users & Subscriptions</h3>
-                <div class="alert alert-info">
-                    <strong>User Levels:</strong><br>
-                    • <strong>Registered:</strong> Can access subscriber-only content<br>
-                    • <strong>Paid:</strong> Can access all premium content (requires your approval)
-                </div>
                 <div id="users-list"></div>
             </div>
 
@@ -1103,45 +1130,16 @@
         </div>
     </div>
 
-    <!-- Quill Rich Text Editor Library -->
+    <!-- Quill Editor -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <!-- Firebase SDK and Application Logic -->
+    <!-- Firebase & Application Logic -->
     <script type="module">
-        // ==========================================
-        // FIREBASE INITIALIZATION
-        // ==========================================
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
-            signOut 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc, 
-            updateDoc, 
-            deleteDoc,
-            query,
-            orderBy,
-            limit,
-            setDoc,
-            getDoc
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import {
-            getStorage,
-            ref,
-            uploadBytesResumable,
-            getDownloadURL,
-            deleteObject
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, limit, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAAgMmS-9XvwLyd85bGLMZvdQfM8mW1wzc",
             authDomain: "uncover-markets.firebaseapp.com",
@@ -1152,73 +1150,94 @@
             measurementId: "G-9PBZ62PMDW"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        // Make available globally
         window.auth = auth;
         window.db = db;
         window.storage = storage;
 
-        // Admin email
         const ADMIN_EMAIL = 'uncover.markets@gmail.com';
         
-        // Current user state
         let currentUser = null;
         let isAdmin = false;
         let userLevel = 'free';
         let userData = null;
-
-        // Rich Text Editor instance
         let quillEditor = null;
-
-        // Photo upload state
         let selectedPhotoFile = null;
 
         // ==========================================
-        // MOBILE FLASH MESSAGE FIX - Dynamic Positioning
+        // HAMBURGER MENU TOGGLE
         // ==========================================
-        function fixFlashMessagePosition() {
-            const navElement = document.getElementById('nav-element');
-            const flashMessage = document.getElementById('flash-message');
+        window.toggleMobileMenu = function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hamburger = document.getElementById('hamburger-btn');
             
-            if (!navElement || !flashMessage) return;
-            
-            // Get actual navigation height
-            const navHeight = navElement.offsetHeight;
-            
-            // Update flash message top position
-            flashMessage.style.top = navHeight + 'px';
-        }
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                hamburger.textContent = '☰';
+            } else {
+                mobileMenu.classList.add('active');
+                hamburger.textContent = '✕';
+            }
+        };
 
-        // Call on page load
-        window.addEventListener('load', fixFlashMessagePosition);
-
-        // Call on window resize (handles orientation change)
-        window.addEventListener('resize', fixFlashMessagePosition);
-
-        // Call on orientation change
-        window.addEventListener('orientationchange', () => {
-            setTimeout(fixFlashMessagePosition, 100);
-        });
+        // Close mobile menu when link clicked
+        window.closeMobileMenu = function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hamburger = document.getElementById('hamburger-btn');
+            mobileMenu.classList.remove('active');
+            hamburger.textContent = '☰';
+        };
 
         // ==========================================
-        // FLASH MESSAGE FUNCTIONS
+        // FLASH MESSAGE - FIXED FOR MOBILE
         // ==========================================
         window.closeFlashMessage = function() {
-            document.getElementById('flash-message').classList.add('hidden');
+            const flashMsg = document.getElementById('flash-message');
+            if (flashMsg) {
+                flashMsg.classList.remove('active');
+                flashMsg.classList.add('hidden');
+            }
         };
+
+        async function loadFlashMessage() {
+            try {
+                const docRef = doc(db, 'settings', 'flashMessage');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const flash = docSnap.data();
+                    const flashDiv = document.getElementById('flash-message');
+                    const flashContent = document.getElementById('flash-content');
+                    
+                    if (flash.enabled) {
+                        flashContent.textContent = flash.text;
+                        flashContent.style.fontSize = flash.size + 'px';
+                        flashDiv.style.backgroundColor = flash.bgColor;
+                        flashDiv.style.color = flash.color;
+                        flashContent.style.animationDuration = flash.speed + 's';
+                        
+                        flashDiv.classList.remove('hidden');
+                        flashDiv.classList.add('active');
+                    } else {
+                        flashDiv.classList.remove('active');
+                        flashDiv.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading flash message:', error);
+            }
+        }
 
         window.deleteFlashMessage = async function() {
             if (confirm('Delete the flash message?')) {
                 try {
                     await deleteDoc(doc(db, 'settings', 'flashMessage'));
                     alert('Flash message deleted!');
-                    document.getElementById('flash-message').classList.add('hidden');
-                    document.getElementById('flash-text').value = '';
+                    closeFlashMessage();
                 } catch (error) {
                     alert('Error deleting flash message: ' + error.message);
                 }
@@ -1246,7 +1265,6 @@
                     }
                 });
 
-                // Handle image insertion
                 const imageHandler = () => {
                     const input = document.createElement('input');
                     input.setAttribute('type', 'file');
@@ -1330,7 +1348,6 @@
                     },
                     (error) => {
                         photoProgress.classList.add('hidden');
-                        console.error('Upload error:', error);
                         reject(error);
                     },
                     async () => {
@@ -1339,7 +1356,6 @@
                             photoProgress.classList.add('hidden');
                             resolve(downloadUrl);
                         } catch (error) {
-                            console.error('Error getting download URL:', error);
                             reject(error);
                         }
                     }
@@ -1366,25 +1382,25 @@
                 if (isAdmin) {
                     userLevel = 'admin';
                 }
-                
-                console.log('User signed in:', user.email, 'Level:', userLevel);
             } else {
                 userLevel = 'free';
                 userData = null;
-                console.log('User signed out');
             }
             
             updateNavigation();
             await loadContent();
-            setTimeout(fixFlashMessagePosition, 100);
         });
 
         // ==========================================
-        // NAVIGATION FUNCTIONS
+        // NAVIGATION UPDATE
         // ==========================================
         function updateNavigation() {
             const navButtons = document.getElementById('nav-buttons');
+            const mobileMenu = document.getElementById('mobile-menu');
             
+            let navHTML = '';
+            let mobileHTML = '';
+
             if (currentUser) {
                 let badge = '';
                 if (isAdmin) {
@@ -1395,31 +1411,51 @@
                     badge = '<span class="user-badge badge-subscriber">SUBSCRIBER</span>';
                 }
                 
-                navButtons.innerHTML = `
+                navHTML = `
                     <div>
-                        <a href="#" onclick="showHome()">Home</a>
-                        <a href="#" onclick="showArticles()">Articles</a>
-                        <a href="#" onclick="showNewsletters()">Newsletters</a>
-                        ${isAdmin ? '<a href="#" onclick="showAdmin()">Admin</a>' : ''}
+                        <a href="#" onclick="showHome(); return false;">Home</a>
+                        <a href="#" onclick="showArticles(); return false;">Articles</a>
+                        <a href="#" onclick="showNewsletters(); return false;">Newsletters</a>
+                        ${isAdmin ? '<a href="#" onclick="showAdmin(); return false;">Admin</a>' : ''}
                     </div>
                     <div>
                         ${badge}
                         <button onclick="handleLogout()">Logout</button>
                     </div>
                 `;
+
+                mobileHTML = `
+                    <a href="#" onclick="showHome(); closeMobileMenu(); return false;">Home</a>
+                    <a href="#" onclick="showArticles(); closeMobileMenu(); return false;">Articles</a>
+                    <a href="#" onclick="showNewsletters(); closeMobileMenu(); return false;">Newsletters</a>
+                    ${isAdmin ? '<a href="#" onclick="showAdmin(); closeMobileMenu(); return false;">Admin</a>' : ''}
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                        ${badge}
+                    </div>
+                    <button onclick="handleLogout(); closeMobileMenu();" style="text-align: left;">Logout</button>
+                `;
             } else {
-                navButtons.innerHTML = `
+                navHTML = `
                     <div>
-                        <a href="#" onclick="showHome()">Home</a>
+                        <a href="#" onclick="showHome(); return false;">Home</a>
                         <button onclick="openModal('login-modal')">Login</button>
                         <button onclick="openModal('register-modal')">Register</button>
                     </div>
                 `;
+
+                mobileHTML = `
+                    <a href="#" onclick="showHome(); closeMobileMenu(); return false;">Home</a>
+                    <button onclick="openModal('login-modal'); closeMobileMenu();">Login</button>
+                    <button onclick="openModal('register-modal'); closeMobileMenu();">Register</button>
+                `;
             }
+            
+            navButtons.innerHTML = navHTML;
+            mobileMenu.innerHTML = mobileHTML;
         }
 
         // ==========================================
-        // ACCESS CONTROL FUNCTIONS
+        // ACCESS CONTROL
         // ==========================================
         function canAccessContent(contentAccessLevel) {
             if (contentAccessLevel === 'free') return true;
@@ -1496,7 +1532,7 @@
         };
 
         // ==========================================
-        // AUTHENTICATION HANDLERS
+        // AUTHENTICATION
         // ==========================================
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1509,7 +1545,6 @@
                 messageDiv.innerHTML = '<div class="alert alert-success">Login successful!</div>';
                 setTimeout(() => closeModal('login-modal'), 1000);
             } catch (error) {
-                console.error('Login error:', error);
                 messageDiv.innerHTML = `<div class="alert alert-error">Login failed: ${error.message}</div>`;
             }
         });
@@ -1534,10 +1569,9 @@
                     approvedAt: null
                 });
 
-                messageDiv.innerHTML = '<div class="alert alert-success">Registration successful! You now have access to subscriber content.</div>';
+                messageDiv.innerHTML = '<div class="alert alert-success">Registration successful!</div>';
                 setTimeout(() => closeModal('register-modal'), 2000);
             } catch (error) {
-                console.error('Registration error:', error);
                 messageDiv.innerHTML = `<div class="alert alert-error">Registration failed: ${error.message}</div>`;
             }
         });
@@ -1547,7 +1581,6 @@
                 await signOut(auth);
                 showHome();
             } catch (error) {
-                console.error('Logout error:', error);
                 alert('Logout failed: ' + error.message);
             }
         };
@@ -1556,6 +1589,7 @@
         // NAVIGATION FUNCTIONS
         // ==========================================
         window.showHome = function() {
+            closeMobileMenu();
             document.getElementById('home-articles').classList.remove('hidden');
             document.getElementById('articles-section').classList.add('hidden');
             document.getElementById('newsletters-section').classList.add('hidden');
@@ -1566,6 +1600,7 @@
         };
 
         window.showArticles = function() {
+            closeMobileMenu();
             document.getElementById('home-articles').classList.add('hidden');
             document.getElementById('articles-section').classList.remove('hidden');
             document.getElementById('newsletters-section').classList.add('hidden');
@@ -1576,6 +1611,7 @@
         };
 
         window.showNewsletters = function() {
+            closeMobileMenu();
             document.getElementById('home-articles').classList.add('hidden');
             document.getElementById('articles-section').classList.add('hidden');
             document.getElementById('newsletters-section').classList.remove('hidden');
@@ -1586,6 +1622,7 @@
         };
 
         window.showAdmin = function() {
+            closeMobileMenu();
             if (!isAdmin) {
                 alert('Access denied. Admin only.');
                 return;
@@ -1631,7 +1668,7 @@
         };
 
         // ==========================================
-        // CONTENT LOADING FUNCTIONS
+        // CONTENT LOADING
         // ==========================================
         async function loadContent() {
             await loadHomeArticles();
@@ -1691,32 +1728,6 @@
             }
         };
 
-        async function loadFlashMessage() {
-            try {
-                const docRef = doc(db, 'settings', 'flashMessage');
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const flash = docSnap.data();
-                    const flashDiv = document.getElementById('flash-message');
-                    const flashContent = document.getElementById('flash-content');
-                    
-                    if (flash.enabled) {
-                        flashDiv.classList.remove('hidden');
-                        flashContent.textContent = flash.text;
-                        flashContent.style.fontSize = flash.size + 'px';
-                        flashDiv.style.backgroundColor = flash.bgColor;
-                        flashDiv.style.color = flash.color;
-                        flashContent.style.animationDuration = flash.speed + 's';
-                    } else {
-                        flashDiv.classList.add('hidden');
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading flash message:', error);
-            }
-        }
-
         async function loadFlashMessageSettings() {
             try {
                 const docRef = doc(db, 'settings', 'flashMessage');
@@ -1756,7 +1767,6 @@
             document.getElementById('bg-color-preview').style.backgroundColor = bgColor;
         };
 
-        // Add event listeners for real-time preview
         document.getElementById('flash-text').addEventListener('input', window.updateFlashPreview);
         document.getElementById('flash-size').addEventListener('change', window.updateFlashPreview);
         document.getElementById('flash-color').addEventListener('input', window.updateFlashPreview);
@@ -1931,9 +1941,6 @@
             }
         };
 
-        // ==========================================
-        // ADMIN FUNCTIONS
-        // ==========================================
         async function loadAdminContent() {
             loadCurrentIntro();
         }
@@ -1999,7 +2006,7 @@
         window.approvePaid = async function(userId) {
             if (!isAdmin) return;
             
-            if (confirm('Approve this user as a PAID subscriber? They will get access to all premium content.')) {
+            if (confirm('Approve this user as a PAID subscriber?')) {
                 try {
                     await updateDoc(doc(db, 'users', userId), {
                         subscriptionLevel: 'paid',
@@ -2008,7 +2015,6 @@
                     alert('User approved as paid subscriber!');
                     loadUsers();
                 } catch (error) {
-                    console.error('Error approving user:', error);
                     alert('Error approving user: ' + error.message);
                 }
             }
@@ -2017,7 +2023,7 @@
         window.revokeAccess = async function(userId) {
             if (!isAdmin) return;
             
-            if (confirm('Revoke paid subscription? User will return to regular subscriber level.')) {
+            if (confirm('Revoke paid subscription?')) {
                 try {
                     await updateDoc(doc(db, 'users', userId), {
                         subscriptionLevel: 'subscriber',
@@ -2026,14 +2032,12 @@
                     alert('Paid subscription revoked!');
                     loadUsers();
                 } catch (error) {
-                    console.error('Error revoking access:', error);
                     alert('Error revoking access: ' + error.message);
                 }
             }
         };
 
         async function loadManageContent() {
-            // Load articles
             const articlesDiv = document.getElementById('manage-articles-list');
             articlesDiv.innerHTML = '<p>Loading...</p>';
 
@@ -2061,7 +2065,6 @@
                 console.error('Error loading articles:', error);
             }
 
-            // Load newsletters
             const newslettersDiv = document.getElementById('manage-newsletters-list');
             newslettersDiv.innerHTML = '<p>Loading...</p>';
 
@@ -2105,7 +2108,6 @@
             const category = document.getElementById('article-category').value;
             const content = quillEditor.root.innerHTML;
             const accessLevel = document.querySelector('input[name="article-access"]:checked').value;
-
             const plainText = quillEditor.getText().substring(0, 150);
 
             try {
@@ -2124,7 +2126,6 @@
                 quillEditor.setContents([]);
                 loadHomeArticles();
             } catch (error) {
-                console.error('Error adding article:', error);
                 alert('Error publishing article: ' + error.message);
             }
         });
@@ -2155,7 +2156,6 @@
                 alert('Newsletter published successfully!');
                 e.target.reset();
             } catch (error) {
-                console.error('Error adding newsletter:', error);
                 alert('Error publishing newsletter: ' + error.message);
             }
         });
@@ -2189,7 +2189,6 @@
                 loadCurrentPhoto();
                 loadAdminPhoto();
             } catch (error) {
-                console.error('Error uploading photo:', error);
                 alert('Error uploading photo: ' + error.message);
             }
         });
@@ -2222,7 +2221,6 @@
                 alert('Flash message saved successfully!');
                 await loadFlashMessage();
             } catch (error) {
-                console.error('Error saving flash message:', error);
                 alert('Error saving flash message: ' + error.message);
             }
         });
@@ -2246,7 +2244,6 @@
                 alert('Introduction updated successfully!');
                 loadIntroduction();
             } catch (error) {
-                console.error('Error updating introduction:', error);
                 alert('Error updating introduction: ' + error.message);
             }
         });
@@ -2264,7 +2261,6 @@
                     loadManageContent();
                     loadHomeArticles();
                 } catch (error) {
-                    console.error('Error deleting article:', error);
                     alert('Error deleting article: ' + error.message);
                 }
             }
@@ -2282,13 +2278,11 @@
                     alert('Newsletter deleted successfully!');
                     loadManageContent();
                 } catch (error) {
-                    console.error('Error deleting newsletter:', error);
                     alert('Error deleting newsletter: ' + error.message);
                 }
             }
         };
 
-        // Initialize on load
         showHome();
     </script>
 
@@ -2299,9 +2293,6 @@
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
                         console.log('SW registered:', registration);
-                        setInterval(() => {
-                            registration.update();
-                        }, 60000);
                     })
                     .catch(err => console.log('SW registration failed:', err));
             });
