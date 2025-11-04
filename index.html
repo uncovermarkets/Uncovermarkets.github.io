@@ -242,9 +242,96 @@
         }
 
         .form-group input[type="checkbox"],
-        .form-group input[type="radio"] {
+        .form-group input[type="radio"],
+        .form-group input[type="file"] {
             width: auto;
             margin-right: 0.5rem;
+        }
+
+        /* Toggle Tabs */
+        .toggle-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .toggle-tab {
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .toggle-tab.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+        }
+
+        .toggle-content {
+            display: none;
+        }
+
+        .toggle-content.active {
+            display: block;
+        }
+
+        /* File Upload */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.75rem;
+            background: #e9ecef;
+            border: 2px dashed #1e3a8a;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-input-label:hover {
+            background: #dee2e6;
+        }
+
+        .file-input-label.dragover {
+            background: #d1ecf1;
+            border-color: #0c5460;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: #28a745;
+            width: 0%;
+            transition: width 0.3s;
         }
 
         button[type="submit"], .btn-primary {
@@ -260,6 +347,11 @@
 
         button[type="submit"]:hover, .btn-primary:hover {
             background: #2c5ba9;
+        }
+
+        button[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
@@ -486,6 +578,10 @@
                 margin-top: 1rem;
                 width: 100%;
             }
+
+            .toggle-tabs {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -622,10 +718,42 @@
                         <label>Newsletter Description</label>
                         <textarea id="newsletter-description" placeholder="Enter newsletter description..." required></textarea>
                     </div>
+
+                    <!-- PDF Source Toggle -->
                     <div class="form-group">
-                        <label>PDF File (URL or upload)</label>
-                        <input type="url" id="newsletter-pdf" placeholder="https://example.com/newsletter.pdf" required>
+                        <label><strong>PDF Source:</strong></label>
+                        <div class="toggle-tabs">
+                            <button type="button" class="toggle-tab active" onclick="togglePdfSource('upload')">Upload PDF</button>
+                            <button type="button" class="toggle-tab" onclick="togglePdfSource('link')">Provide Link</button>
+                        </div>
                     </div>
+
+                    <!-- Upload PDF Option -->
+                    <div id="pdf-upload-option" class="toggle-content active">
+                        <div class="form-group">
+                            <label>Upload PDF File</label>
+                            <div class="file-input-wrapper">
+                                <label for="newsletter-pdf-file" class="file-input-label" id="pdf-label">
+                                    📁 Click to upload PDF or drag & drop
+                                </label>
+                                <input type="file" id="newsletter-pdf-file" accept=".pdf">
+                                <div class="file-name" id="pdf-file-name"></div>
+                                <div class="upload-progress hidden" id="pdf-progress">
+                                    <div class="upload-progress-bar" id="pdf-progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Provide Link Option -->
+                    <div id="pdf-link-option" class="toggle-content hidden">
+                        <div class="form-group">
+                            <label>PDF File URL</label>
+                            <input type="url" id="newsletter-pdf-link" placeholder="https://example.com/newsletter.pdf">
+                            <small style="color: #666; margin-top: 0.5rem; display: block;">Paste the URL of your PDF file (Google Drive, Dropbox, etc.)</small>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label><strong>Access Level:</strong></label>
                         <div>
@@ -647,7 +775,7 @@
                             </label>
                         </div>
                     </div>
-                    <button type="submit">Publish Newsletter</button>
+                    <button type="submit" id="publish-newsletter-btn">Publish Newsletter</button>
                 </form>
             </div>
 
@@ -774,6 +902,13 @@
             setDoc,
             getDoc
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            uploadBytesResumable,
+            getDownloadURL,
+            deleteObject
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -790,19 +925,120 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         // Make available globally
         window.auth = auth;
         window.db = db;
+        window.storage = storage;
 
-        // Admin email - CHANGE THIS TO YOUR ADMIN EMAIL
+        // Admin email
         const ADMIN_EMAIL = 'uncover.markets@gmail.com';
         
         // Current user state
         let currentUser = null;
         let isAdmin = false;
-        let userLevel = 'free'; // 'free', 'subscriber', 'paid', 'admin'
+        let userLevel = 'free';
         let userData = null;
+
+        // PDF source selection
+        let selectedPdfSource = 'upload'; // 'upload' or 'link'
+        let selectedPdfFile = null;
+
+        // ==========================================
+        // PDF SOURCE TOGGLE
+        // ==========================================
+        window.togglePdfSource = function(source) {
+            selectedPdfSource = source;
+            
+            // Update button states
+            document.querySelectorAll('.toggle-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Toggle content visibility
+            document.getElementById('pdf-upload-option').classList.toggle('hidden', source !== 'upload');
+            document.getElementById('pdf-link-option').classList.toggle('hidden', source !== 'link');
+            
+            // Reset selections
+            if (source === 'upload') {
+                document.getElementById('newsletter-pdf-link').value = '';
+            } else {
+                selectedPdfFile = null;
+                document.getElementById('newsletter-pdf-file').value = '';
+                document.getElementById('pdf-file-name').textContent = '';
+            }
+        };
+
+        // ==========================================
+        // FILE UPLOAD HANDLERS
+        // ==========================================
+        const pdfInput = document.getElementById('newsletter-pdf-file');
+        const pdfLabel = document.getElementById('pdf-label');
+        const pdfFileName = document.getElementById('pdf-file-name');
+        const pdfProgress = document.getElementById('pdf-progress');
+
+        pdfInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelection(file);
+            }
+        });
+
+        pdfLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            pdfLabel.classList.add('dragover');
+        });
+
+        pdfLabel.addEventListener('dragleave', () => {
+            pdfLabel.classList.remove('dragover');
+        });
+
+        pdfLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            pdfLabel.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                handleFileSelection(file);
+            } else {
+                alert('Please drop a PDF file');
+            }
+        });
+
+        function handleFileSelection(file) {
+            if (file.size > 100 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 100 MB.');
+                return;
+            }
+            selectedPdfFile = file;
+            pdfFileName.textContent = `📄 Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        }
+
+        async function uploadPdfToStorage(file) {
+            return new Promise((resolve, reject) => {
+                const timestamp = Date.now();
+                const fileName = `newsletters/${timestamp}-${file.name}`;
+                const storageRef = ref(storage, fileName);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                pdfProgress.classList.remove('hidden');
+
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        document.getElementById('pdf-progress-bar').style.width = progress + '%';
+                    },
+                    (error) => {
+                        pdfProgress.classList.add('hidden');
+                        reject(error);
+                    },
+                    async () => {
+                        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                        pdfProgress.classList.add('hidden');
+                        resolve(downloadUrl);
+                    }
+                );
+            });
+        }
 
         // ==========================================
         // AUTH STATE OBSERVER
@@ -812,7 +1048,6 @@
             isAdmin = user && user.email === ADMIN_EMAIL;
             
             if (user) {
-                // Get user data from Firestore
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (userDoc.exists()) {
                     userData = userDoc.data();
@@ -982,12 +1217,11 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                // Store user data with default subscription level
                 await setDoc(doc(db, 'users', userCredential.user.uid), {
                     name: name,
                     email: email,
                     phone: phone,
-                    subscriptionLevel: 'subscriber', // Default: registered subscriber
+                    subscriptionLevel: 'subscriber',
                     registeredAt: new Date().toISOString(),
                     approvedAt: null
                 });
@@ -1401,10 +1635,11 @@
                     snapshot.forEach(docSnap => {
                         const newsletter = docSnap.data();
                         const accessLevel = newsletter.accessLevel || 'free';
+                        const isUploaded = newsletter.pdfUrl && newsletter.pdfUrl.includes('firebasestorage.googleapis.com');
                         html += `
                             <div class="card">
                                 <h4>${newsletter.title}</h4>
-                                <p>Access: <strong>${accessLevel.toUpperCase()}</strong></p>
+                                <p>Access: <strong>${accessLevel.toUpperCase()}</strong> | ${isUploaded ? 'Uploaded' : 'External Link'}</p>
                                 <button class="btn-danger btn-small" onclick="deleteNewsletter('${docSnap.id}')">Delete</button>
                             </div>
                         `;
@@ -1463,10 +1698,33 @@
 
             const title = document.getElementById('newsletter-title').value;
             const description = document.getElementById('newsletter-description').value;
-            const pdfUrl = document.getElementById('newsletter-pdf').value;
             const accessLevel = document.querySelector('input[name="newsletter-access"]:checked').value;
+            const publishBtn = document.getElementById('publish-newsletter-btn');
+
+            let pdfUrl = '';
 
             try {
+                publishBtn.disabled = true;
+
+                if (selectedPdfSource === 'upload') {
+                    if (!selectedPdfFile) {
+                        alert('Please select a PDF file to upload');
+                        publishBtn.disabled = false;
+                        return;
+                    }
+                    publishBtn.textContent = 'Uploading and publishing...';
+                    pdfUrl = await uploadPdfToStorage(selectedPdfFile);
+                } else {
+                    const manualUrl = document.getElementById('newsletter-pdf-link').value;
+                    if (!manualUrl) {
+                        alert('Please provide a PDF URL');
+                        publishBtn.disabled = false;
+                        return;
+                    }
+                    publishBtn.textContent = 'Publishing...';
+                    pdfUrl = manualUrl;
+                }
+
                 await addDoc(collection(db, 'newsletters'), {
                     title,
                     description,
@@ -1477,10 +1735,22 @@
                 });
 
                 alert('Newsletter published successfully!');
+                
+                // Reset form
                 e.target.reset();
+                selectedPdfFile = null;
+                document.getElementById('pdf-file-name').textContent = '';
+                document.getElementById('newsletter-pdf-file').value = '';
+                document.getElementById('newsletter-pdf-link').value = '';
+                publishBtn.disabled = false;
+                publishBtn.textContent = 'Publish Newsletter';
+                
+                loadNewsletters();
             } catch (error) {
                 console.error('Error adding newsletter:', error);
                 alert('Error publishing newsletter: ' + error.message);
+                publishBtn.disabled = false;
+                publishBtn.textContent = 'Publish Newsletter';
             }
         });
 
@@ -1535,7 +1805,22 @@
 
             if (confirm('Are you sure you want to delete this newsletter?')) {
                 try {
-                    await deleteDoc(doc(db, 'newsletters', newsletterId));
+                    const docRef = doc(db, 'newsletters', newsletterId);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists() && docSnap.data().pdfUrl) {
+                        const pdfUrl = docSnap.data().pdfUrl;
+                        if (pdfUrl.includes('firebasestorage.googleapis.com')) {
+                            try {
+                                const fileRef = ref(storage, pdfUrl);
+                                await deleteObject(fileRef);
+                            } catch (err) {
+                                console.warn('Could not delete PDF from storage:', err);
+                            }
+                        }
+                    }
+                    
+                    await deleteDoc(docRef);
                     alert('Newsletter deleted successfully!');
                     loadManageContent();
                 } catch (error) {
