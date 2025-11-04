@@ -28,6 +28,58 @@
             padding: 0 20px;
         }
 
+        /* Flash Message (Scrolling Banner) */
+        .flash-message-display {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #1e3a8a;
+            color: white;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            z-index: 999;
+            font-size: 16px;
+        }
+
+        .flash-message-display.hidden {
+            display: none;
+        }
+
+        .flash-message-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 10s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .flash-message-close {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .flash-message-close:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
         /* Navigation */
         nav {
             background: #1e3a8a;
@@ -245,9 +297,16 @@
 
         .form-group input[type="checkbox"],
         .form-group input[type="radio"],
-        .form-group input[type="file"] {
+        .form-group input[type="file"],
+        .form-group input[type="color"],
+        .form-group input[type="number"] {
             width: auto;
             margin-right: 0.5rem;
+        }
+
+        .form-group input[type="color"] {
+            height: 40px;
+            cursor: pointer;
         }
 
         /* Rich Text Editor */
@@ -272,7 +331,7 @@
             padding: 1rem;
         }
 
-        /* Image Upload */
+        /* File Upload */
         .file-input-wrapper {
             position: relative;
             overflow: hidden;
@@ -446,6 +505,13 @@
             margin-bottom: 1rem;
         }
 
+        .admin-photo {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
         /* Admin Panel Tabs */
         .admin-tabs {
             display: flex;
@@ -577,6 +643,17 @@
             color: #1e3a8a;
         }
 
+        /* Color preview */
+        .color-preview {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            margin-left: 10px;
+            vertical-align: middle;
+            border: 2px solid #ddd;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             nav .container {
@@ -609,10 +686,21 @@
             .ql-container {
                 min-height: 200px;
             }
+
+            .flash-message-display {
+                height: 40px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Flash Message Display -->
+    <div id="flash-message" class="flash-message-display hidden">
+        <div class="flash-message-content" id="flash-content"></div>
+        <button class="flash-message-close" onclick="closeFlashMessage()">×</button>
+    </div>
+
     <!-- Navigation -->
     <nav>
         <div class="container">
@@ -643,6 +731,7 @@
         <section id="about-section" class="about-section">
             <div class="icon">👤</div>
             <h2>About Me</h2>
+            <div id="admin-photo-display"></div>
             <p id="intro-text">Use some description which we can change later - This is the default introduction text. You can update this by editing the admin panel.</p>
         </section>
 
@@ -677,6 +766,8 @@
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="showAdminTab('add-article')">Add Article</button>
                 <button class="admin-tab" onclick="showAdminTab('add-newsletter')">Add Newsletter</button>
+                <button class="admin-tab" onclick="showAdminTab('manage-photos')">Manage Photos</button>
+                <button class="admin-tab" onclick="showAdminTab('flash-message')">Flash Message</button>
                 <button class="admin-tab" onclick="showAdminTab('update-intro')">Update Introduction</button>
                 <button class="admin-tab" onclick="showAdminTab('manage-users')">Manage Users</button>
                 <button class="admin-tab" onclick="showAdminTab('manage-content')">Manage Content</button>
@@ -768,6 +859,79 @@
                         </div>
                     </div>
                     <button type="submit" id="publish-newsletter-btn">Publish Newsletter</button>
+                </form>
+            </div>
+
+            <!-- Manage Photos Tab -->
+            <div id="manage-photos-tab" class="admin-content card">
+                <h3>Upload Admin Photo</h3>
+                <div class="alert alert-info">This photo will display in the About Me section</div>
+                <form id="upload-photo-form">
+                    <div class="form-group">
+                        <label>Upload Photo (JPG, PNG, JPEG)</label>
+                        <div class="file-input-wrapper">
+                            <label for="admin-photo-file" class="file-input-label" id="photo-label">
+                                📸 Click to upload photo or drag & drop
+                            </label>
+                            <input type="file" id="admin-photo-file" accept="image/*">
+                            <div class="file-name" id="photo-file-name"></div>
+                            <div class="upload-progress hidden" id="photo-progress">
+                                <div class="upload-progress-bar" id="photo-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="current-photo-display" style="margin-top: 1rem;"></div>
+                    <button type="submit">Upload Photo</button>
+                </form>
+            </div>
+
+            <!-- Flash Message Tab -->
+            <div id="flash-message-tab" class="admin-content card">
+                <h3>Manage Flash Message</h3>
+                <form id="flash-message-form">
+                    <div class="form-group">
+                        <label>Message Text</label>
+                        <input type="text" id="flash-text" placeholder="Enter your message" required>
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">Text that scrolls across the top</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Text Size (pixels)</label>
+                        <input type="number" id="flash-size" min="10" max="50" value="16">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Scroll Speed (seconds)</label>
+                        <input type="number" id="flash-speed" min="5" max="60" value="10" step="1">
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">How long to complete one scroll (5-60 seconds)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Text Color</label>
+                        <input type="color" id="flash-color" value="#ffffff">
+                        <div class="color-preview" id="text-color-preview" style="background: #ffffff;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Background Color</label>
+                        <input type="color" id="flash-bg-color" value="#1e3a8a">
+                        <div class="color-preview" id="bg-color-preview" style="background: #1e3a8a;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="flash-enabled" checked>
+                            Enable Flash Message
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Preview:</strong>
+                        <div id="flash-preview" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px; overflow: hidden; height: 50px; display: flex; align-items: center;"></div>
+                    </div>
+
+                    <button type="submit" style="margin-top: 1rem;">Save Flash Message</button>
+                    <button type="button" class="btn-secondary" onclick="deleteFlashMessage()" style="width: auto; margin-top: 1rem;">Delete Message</button>
                 </form>
             </div>
 
@@ -897,6 +1061,13 @@
             setDoc,
             getDoc
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            uploadBytesResumable,
+            getDownloadURL,
+            deleteObject
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -913,10 +1084,12 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         // Make available globally
         window.auth = auth;
         window.db = db;
+        window.storage = storage;
 
         // Admin email
         const ADMIN_EMAIL = 'uncover.markets@gmail.com';
@@ -929,6 +1102,29 @@
 
         // Rich Text Editor instance
         let quillEditor = null;
+
+        // Photo upload state
+        let selectedPhotoFile = null;
+
+        // ==========================================
+        // FLASH MESSAGE FUNCTIONS
+        // ==========================================
+        window.closeFlashMessage = function() {
+            document.getElementById('flash-message').classList.add('hidden');
+        };
+
+        window.deleteFlashMessage = async function() {
+            if (confirm('Delete the flash message?')) {
+                try {
+                    await deleteDoc(doc(db, 'settings', 'flashMessage'));
+                    alert('Flash message deleted!');
+                    document.getElementById('flash-message').classList.add('hidden');
+                    document.getElementById('flash-text').value = '';
+                } catch (error) {
+                    alert('Error deleting flash message: ' + error.message);
+                }
+            }
+        };
 
         // ==========================================
         // INITIALIZE QUILL EDITOR
@@ -961,7 +1157,6 @@
                     input.onchange = async () => {
                         const file = input.files[0];
                         if (file) {
-                            // Convert image to data URL
                             const reader = new FileReader();
                             reader.onload = (e) => {
                                 const range = quillEditor.getSelection();
@@ -972,9 +1167,85 @@
                     };
                 };
 
-                // Override image handler
                 quillEditor.getModule('toolbar').addHandler('image', imageHandler);
             }
+        }
+
+        // ==========================================
+        // PHOTO UPLOAD HANDLERS
+        // ==========================================
+        const photoInput = document.getElementById('admin-photo-file');
+        const photoLabel = document.getElementById('photo-label');
+        const photoFileName = document.getElementById('photo-file-name');
+        const photoProgress = document.getElementById('photo-progress');
+
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handlePhotoSelection(file);
+            }
+        });
+
+        photoLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoLabel.classList.add('dragover');
+        });
+
+        photoLabel.addEventListener('dragleave', () => {
+            photoLabel.classList.remove('dragover');
+        });
+
+        photoLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoLabel.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handlePhotoSelection(file);
+            } else {
+                alert('Please drop an image file');
+            }
+        });
+
+        function handlePhotoSelection(file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 5 MB.');
+                return;
+            }
+            selectedPhotoFile = file;
+            photoFileName.textContent = `📸 Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        }
+
+        async function uploadPhotoToStorage(file) {
+            return new Promise((resolve, reject) => {
+                const timestamp = Date.now();
+                const fileName = `admin-photos/${timestamp}-${file.name}`;
+                const storageRef = ref(storage, fileName);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                photoProgress.classList.remove('hidden');
+
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        document.getElementById('photo-progress-bar').style.width = progress + '%';
+                    },
+                    (error) => {
+                        photoProgress.classList.add('hidden');
+                        console.error('Upload error:', error);
+                        reject(error);
+                    },
+                    async () => {
+                        try {
+                            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            photoProgress.classList.add('hidden');
+                            resolve(downloadUrl);
+                        } catch (error) {
+                            console.error('Error getting download URL:', error);
+                            reject(error);
+                        }
+                    }
+                );
+            });
         }
 
         // ==========================================
@@ -1242,14 +1513,15 @@
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
 
-            // Initialize Quill editor when Add Article tab is opened
             if (tabName === 'add-article') {
                 setTimeout(() => {
                     initializeQuillEditor();
                 }, 100);
-            }
-
-            if (tabName === 'manage-users') {
+            } else if (tabName === 'manage-photos') {
+                loadCurrentPhoto();
+            } else if (tabName === 'flash-message') {
+                loadFlashMessageSettings();
+            } else if (tabName === 'manage-users') {
                 loadUsers();
             } else if (tabName === 'manage-content') {
                 loadManageContent();
@@ -1264,7 +1536,132 @@
         async function loadContent() {
             await loadHomeArticles();
             await loadIntroduction();
+            await loadFlashMessage();
+            await loadAdminPhoto();
         }
+
+        async function loadAdminPhoto() {
+            try {
+                const docRef = doc(db, 'settings', 'adminPhoto');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const photoUrl = docSnap.data().photoUrl;
+                    document.getElementById('admin-photo-display').innerHTML = `<img src="${photoUrl}" alt="Admin Photo" class="admin-photo">`;
+                }
+            } catch (error) {
+                console.error('Error loading admin photo:', error);
+            }
+        }
+
+        async function loadCurrentPhoto() {
+            try {
+                const docRef = doc(db, 'settings', 'adminPhoto');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const photoUrl = docSnap.data().photoUrl;
+                    document.getElementById('current-photo-display').innerHTML = `
+                        <div>
+                            <strong>Current Photo:</strong><br>
+                            <img src="${photoUrl}" alt="Current Admin Photo" class="admin-photo" style="max-width: 150px;">
+                            <br>
+                            <button type="button" class="btn-danger btn-small" onclick="deleteAdminPhoto()">Delete Photo</button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading current photo:', error);
+            }
+        }
+
+        window.deleteAdminPhoto = async function() {
+            if (confirm('Delete the current admin photo?')) {
+                try {
+                    await deleteDoc(doc(db, 'settings', 'adminPhoto'));
+                    alert('Photo deleted!');
+                    document.getElementById('current-photo-display').innerHTML = '';
+                    document.getElementById('admin-photo-display').innerHTML = '';
+                    selectedPhotoFile = null;
+                    document.getElementById('admin-photo-file').value = '';
+                    document.getElementById('photo-file-name').textContent = '';
+                } catch (error) {
+                    alert('Error deleting photo: ' + error.message);
+                }
+            }
+        };
+
+        async function loadFlashMessage() {
+            try {
+                const docRef = doc(db, 'settings', 'flashMessage');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const flash = docSnap.data();
+                    const flashDiv = document.getElementById('flash-message');
+                    const flashContent = document.getElementById('flash-content');
+                    
+                    if (flash.enabled) {
+                        flashDiv.classList.remove('hidden');
+                        flashContent.textContent = flash.text;
+                        flashContent.style.fontSize = flash.size + 'px';
+                        flashDiv.style.backgroundColor = flash.bgColor;
+                        flashDiv.style.color = flash.color;
+                        flashContent.style.animationDuration = flash.speed + 's';
+                    } else {
+                        flashDiv.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading flash message:', error);
+            }
+        }
+
+        async function loadFlashMessageSettings() {
+            try {
+                const docRef = doc(db, 'settings', 'flashMessage');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const flash = docSnap.data();
+                    document.getElementById('flash-text').value = flash.text;
+                    document.getElementById('flash-size').value = flash.size;
+                    document.getElementById('flash-speed').value = flash.speed;
+                    document.getElementById('flash-color').value = flash.color;
+                    document.getElementById('flash-bg-color').value = flash.bgColor;
+                    document.getElementById('flash-enabled').checked = flash.enabled;
+                    updateFlashPreview();
+                }
+            } catch (error) {
+                console.error('Error loading flash message settings:', error);
+            }
+        }
+
+        window.updateFlashPreview = function() {
+            const text = document.getElementById('flash-text').value;
+            const size = document.getElementById('flash-size').value;
+            const color = document.getElementById('flash-color').value;
+            const bgColor = document.getElementById('flash-bg-color').value;
+            const speed = document.getElementById('flash-speed').value;
+            
+            const preview = document.getElementById('flash-preview');
+            preview.textContent = text;
+            preview.style.fontSize = size + 'px';
+            preview.style.color = color;
+            preview.style.backgroundColor = bgColor;
+            preview.style.animationDuration = speed + 's';
+            preview.style.animation = 'scroll-left ' + speed + 's linear infinite';
+            
+            document.getElementById('text-color-preview').style.backgroundColor = color;
+            document.getElementById('bg-color-preview').style.backgroundColor = bgColor;
+        };
+
+        // Add event listeners for real-time preview
+        document.getElementById('flash-text').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-size').addEventListener('change', window.updateFlashPreview);
+        document.getElementById('flash-color').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-bg-color').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-speed').addEventListener('change', window.updateFlashPreview);
 
         async function loadHomeArticles() {
             const articlesDiv = document.getElementById('home-articles-list');
@@ -1609,7 +2006,6 @@
             const content = quillEditor.root.innerHTML;
             const accessLevel = document.querySelector('input[name="article-access"]:checked').value;
 
-            // Extract plain text for preview (max 150 chars)
             const plainText = quillEditor.getText().substring(0, 150);
 
             try {
@@ -1661,6 +2057,73 @@
             } catch (error) {
                 console.error('Error adding newsletter:', error);
                 alert('Error publishing newsletter: ' + error.message);
+            }
+        });
+
+        document.getElementById('upload-photo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            if (!selectedPhotoFile) {
+                alert('Please select a photo');
+                return;
+            }
+
+            try {
+                const photoUrl = await uploadPhotoToStorage(selectedPhotoFile);
+
+                await setDoc(doc(db, 'settings', 'adminPhoto'), {
+                    photoUrl,
+                    uploadedAt: new Date().toISOString()
+                });
+
+                alert('Photo uploaded successfully!');
+                e.target.reset();
+                selectedPhotoFile = null;
+                document.getElementById('photo-file-name').textContent = '';
+                document.getElementById('admin-photo-file').value = '';
+                loadCurrentPhoto();
+                loadAdminPhoto();
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Error uploading photo: ' + error.message);
+            }
+        });
+
+        document.getElementById('flash-message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            const text = document.getElementById('flash-text').value;
+            const size = document.getElementById('flash-size').value;
+            const speed = document.getElementById('flash-speed').value;
+            const color = document.getElementById('flash-color').value;
+            const bgColor = document.getElementById('flash-bg-color').value;
+            const enabled = document.getElementById('flash-enabled').checked;
+
+            try {
+                await setDoc(doc(db, 'settings', 'flashMessage'), {
+                    text,
+                    size: parseInt(size),
+                    speed: parseInt(speed),
+                    color,
+                    bgColor,
+                    enabled
+                });
+
+                alert('Flash message saved successfully!');
+                await loadFlashMessage();
+            } catch (error) {
+                console.error('Error saving flash message:', error);
+                alert('Error saving flash message: ' + error.message);
             }
         });
 
