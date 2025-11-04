@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uncovermarkets-v6'; // Updated version with Quill rich text editor support
+const CACHE_NAME = 'uncovermarkets-v7'; // Updated version with photo upload and flash message support
 const urlsToCache = [
     '/',
     '/index.html',
@@ -67,8 +67,6 @@ self.addEventListener('fetch', event => {
                             return response;
                         }
                         
-                        // Don't cache responses from outside origins (like CDN)
-                        // but do try to cache Firebase calls
                         if (response.type === 'basic' || response.type === 'cors') {
                             const responseToCache = response.clone();
                             caches.open(CACHE_NAME)
