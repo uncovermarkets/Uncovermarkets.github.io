@@ -2281,38 +2281,39 @@
                     alert('Error deleting newsletter: ' + error.message);
                 }
             }
-        };
-    // ==========================================
-// MOBILE DETECTION - JAVASCRIPT BASED
-// ==========================================
+             };
 
-function detectAndApplyMobileLayout() {
-    const isMobile = window.innerWidth <= 768;
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navButtons = document.getElementById('nav-buttons');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (isMobile) {
-        if (hamburgerBtn) hamburgerBtn.style.display = 'block';
-        if (navButtons) navButtons.style.display = 'none';
-    } else {
-        if (hamburgerBtn) hamburgerBtn.style.display = 'none';
-        if (navButtons) navButtons.style.display = 'flex';
-        if (mobileMenu) mobileMenu.classList.remove('active');
-    }
-}
+        // ==========================================
+        // MOBILE DETECTION - JAVASCRIPT BASED
+        // ==========================================
 
-window.addEventListener('load', detectAndApplyMobileLayout);
-window.addEventListener('resize', detectAndApplyMobileLayout);
-window.addEventListener('orientationchange', () => {
-    setTimeout(detectAndApplyMobileLayout, 100);
-});
+        function detectAndApplyMobileLayout() {
+            const isMobile = window.innerWidth <= 768;
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const navButtons = document.getElementById('nav-buttons');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (isMobile) {
+                if (hamburgerBtn) hamburgerBtn.style.display = 'block';
+                if (navButtons) navButtons.style.display = 'none';
+            } else {
+                if (hamburgerBtn) hamburgerBtn.style.display = 'none';
+                if (navButtons) navButtons.style.display = 'flex';
+                if (mobileMenu) mobileMenu.classList.remove('active');
+            }
+        }
 
-detectAndApplyMobileLayout();
+        window.addEventListener('load', detectAndApplyMobileLayout);
+        window.addEventListener('resize', detectAndApplyMobileLayout);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(detectAndApplyMobileLayout, 100);
+        });
+
+        detectAndApplyMobileLayout();
 
         showHome();
     </script>
-
+   
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
