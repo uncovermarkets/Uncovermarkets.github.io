@@ -28,7 +28,7 @@
             padding: 0 20px;
         }
 
-        /* Flash Message (Scrolling Banner) */
+        /* Flash Message (Scrolling Banner) - MOBILE OPTIMIZED */
         .flash-message-display {
             position: fixed;
             top: 60px;
@@ -42,10 +42,11 @@
             overflow: hidden;
             z-index: 999;
             font-size: 16px;
+            transition: top 0.3s ease;
         }
 
         .flash-message-display.hidden {
-            display: none;
+            display: none !important;
         }
 
         .flash-message-content {
@@ -74,10 +75,22 @@
             color: white;
             padding: 5px 10px;
             border-radius: 3px;
+            z-index: 1000;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .flash-message-close:hover {
             background: rgba(255,255,255,0.4);
+        }
+
+        .flash-message-close:active {
+            background: rgba(255,255,255,0.5);
         }
 
         /* Navigation */
@@ -654,7 +667,7 @@
             border: 2px solid #ddd;
         }
 
-        /* Responsive */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             nav .container {
                 flex-direction: column;
@@ -687,22 +700,81 @@
                 min-height: 200px;
             }
 
+            /* MOBILE FLASH MESSAGE FIX */
+            .flash-message-display {
+                height: 45px;
+                font-size: 14px;
+                top: 50px;
+            }
+
+            .flash-message-content {
+                font-size: 14px;
+            }
+
+            .flash-message-close {
+                right: 10px;
+                padding: 3px 8px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h2 {
+                font-size: 1.4rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            nav h1 {
+                font-size: 1.2rem;
+            }
+
+            /* MOBILE FLASH MESSAGE FIX - SMALL SCREENS */
             .flash-message-display {
                 height: 40px;
-                font-size: 14px;
+                font-size: 12px;
+                top: 45px;
+            }
+
+            .flash-message-content {
+                font-size: 12px;
+                padding-left: 100%;
+            }
+
+            .flash-message-close {
+                right: 8px;
+                padding: 2px 6px;
+                font-size: 16px;
+                min-width: 40px;
+                min-height: 40px;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .admin-tabs {
+                gap: 0.5rem;
+            }
+
+            .admin-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Flash Message Display -->
+    <!-- Flash Message Display - MOBILE OPTIMIZED -->
     <div id="flash-message" class="flash-message-display hidden">
         <div class="flash-message-content" id="flash-content"></div>
         <button class="flash-message-close" onclick="closeFlashMessage()">×</button>
     </div>
 
     <!-- Navigation -->
-    <nav>
+    <nav id="nav-element">
         <div class="container">
             <h1>📊 Uncover Markets</h1>
             <div id="nav-buttons"></div>
@@ -1107,6 +1179,33 @@
         let selectedPhotoFile = null;
 
         // ==========================================
+        // MOBILE FLASH MESSAGE FIX - Dynamic Positioning
+        // ==========================================
+        function fixFlashMessagePosition() {
+            const navElement = document.getElementById('nav-element');
+            const flashMessage = document.getElementById('flash-message');
+            
+            if (!navElement || !flashMessage) return;
+            
+            // Get actual navigation height
+            const navHeight = navElement.offsetHeight;
+            
+            // Update flash message top position
+            flashMessage.style.top = navHeight + 'px';
+        }
+
+        // Call on page load
+        window.addEventListener('load', fixFlashMessagePosition);
+
+        // Call on window resize (handles orientation change)
+        window.addEventListener('resize', fixFlashMessagePosition);
+
+        // Call on orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(fixFlashMessagePosition, 100);
+        });
+
+        // ==========================================
         // FLASH MESSAGE FUNCTIONS
         // ==========================================
         window.closeFlashMessage = function() {
@@ -1277,6 +1376,7 @@
             
             updateNavigation();
             await loadContent();
+            setTimeout(fixFlashMessagePosition, 100);
         });
 
         // ==========================================
