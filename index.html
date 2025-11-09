@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uncover Markets - Market Analysis & Insights</title>
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#1e3a8a">
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
@@ -15,16 +15,11 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #1f2937;
-            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
-            min-height: 100vh;
+            color: #333;
+            background: #f8f9fa;
         }
 
         .container {
@@ -33,21 +28,20 @@
             padding: 0 20px;
         }
 
-        /* ========== FLASH MESSAGE ========== */
+        /* Flash Message (Scrolling Banner) */
         .flash-message-display {
             position: fixed;
-            top: 70px;
+            top: 60px;
             left: 0;
             right: 0;
-            height: 45px;
-            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+            height: 50px;
+            background: #1e3a8a;
             color: white;
             display: flex;
             align-items: center;
             overflow: hidden;
             z-index: 999;
-            font-size: 14px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
         }
 
         .flash-message-display.hidden {
@@ -57,9 +51,8 @@
         .flash-message-content {
             display: inline-block;
             padding-left: 100%;
-            animation: scroll-left 8s linear infinite;
+            animation: scroll-left 10s linear infinite;
             white-space: nowrap;
-            font-weight: 500;
         }
 
         @keyframes scroll-left {
@@ -74,37 +67,28 @@
         .flash-message-close {
             position: absolute;
             right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
             cursor: pointer;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.2);
+            font-size: 20px;
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 3px;
-            transition: background 0.2s;
         }
 
         .flash-message-close:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255,255,255,0.4);
         }
 
-        /* ========== NAVIGATION ========== */
+        /* Navigation */
         nav {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: #1e3a8a;
             color: white;
-            padding: 0.75rem 0;
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        nav.scrolled {
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         nav .container {
@@ -112,951 +96,2116 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
         }
 
         nav h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            flex-shrink: 0;
-        }
-
-        nav .nav-links {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
+            font-size: 1.5rem;
         }
 
         nav button, nav a {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            border: 1px solid white;
             color: white;
-            padding: 0.5rem 0.875rem;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 4px;
             text-decoration: none;
             display: inline-block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            white-space: nowrap;
+            font-size: 0.9rem;
         }
 
         nav button:hover, nav a:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
+            background: rgba(255,255,255,0.1);
         }
 
-        nav button:active, nav a:active {
-            transform: translateY(0);
+        /* User Badge */
+        .user-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
         }
 
-        .hamburger {
-            display: none;
-            background: transparent;
-            border: none;
+        .badge-free {
+            background: #6c757d;
             color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
         }
 
-        /* ========== MAIN CONTENT ========== */
-        main {
-            margin-top: 115px;
-            margin-bottom: 3rem;
+        .badge-subscriber {
+            background: #28a745;
+            color: white;
         }
 
+        .badge-paid {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-admin {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
             padding: 3rem 0;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
-        }
-
-        .hero .container {
             text-align: center;
         }
 
         .hero h2 {
-            font-size: 2rem;
-            color: #1e40af;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
-            font-weight: 700;
         }
 
         .hero p {
-            font-size: 1.1rem;
-            color: #1e3a8a;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        .hero .buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero button {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.75rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-        }
-
-        .hero button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.35);
-        }
-
-        .hero button:active {
-            transform: translateY(0);
-        }
-
-        /* ========== SECTIONS ========== */
-        section {
-            background: white;
-            padding: 2rem;
+            font-size: 1.2rem;
             margin-bottom: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
-        section.hidden {
-            display: none;
+        /* Sections */
+        section {
+            padding: 2rem 0;
         }
 
-        h2 {
-            color: #1e40af;
+        .section-title {
+            font-size: 2rem;
             margin-bottom: 1.5rem;
-            font-size: 1.75rem;
-            border-bottom: 3px solid #3b82f6;
-            padding-bottom: 0.75rem;
-        }
-
-        h3 {
             color: #1e3a8a;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
         }
 
-        /* ========== FORM STYLES ========== */
-        form {
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .card h3 {
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .article-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Access Level Badges on Cards */
+        .access-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .access-free {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .access-subscriber {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .access-paid {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Locked Content */
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            max-width: 500px;
-        }
-
-        label {
-            font-weight: 600;
-            color: #1e40af;
-            font-size: 0.95rem;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="number"],
-        textarea,
-        select {
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        input[type="number"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            background: #f8fafc;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-            font-family: 'Courier New', monospace;
-        }
-
-        button[type="submit"] {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            justify-content: center;
+            align-items: center;
             color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-            align-self: flex-start;
-        }
-
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.35);
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
-        }
-
-        .form-error {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 0.75rem;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-success {
-            background: #dcfce7;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 0.75rem;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-info {
-            background: #dbeafe;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 0.75rem;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        /* ========== TABLES ========== */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1e40af;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background: #f0f9ff;
-        }
-
-        /* ========== RICH TEXT EDITOR ========== */
-        .ql-container {
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-
-        .ql-editor {
-            min-height: 200px;
-            max-height: 400px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 1rem;
-        }
-
-        .ql-toolbar {
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            border: 2px solid #e5e7eb;
-            border-bottom: none;
-            background: #f9fafb;
-        }
-
-        .ql-toolbar.ql-snow {
-            padding: 0.75rem;
-        }
-
-        /* ========== FILE UPLOAD ========== */
-        .file-upload-area {
-            border: 2px dashed #3b82f6;
             border-radius: 8px;
+            text-align: center;
             padding: 2rem;
-            text-align: center;
-            background: #f0f9ff;
-            cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .file-upload-area:hover {
-            background: #e0f2fe;
-            border-color: #1e40af;
-        }
-
-        .file-upload-area input[type="file"] {
-            display: none;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            nav .container {
-                gap: 0.5rem;
-            }
-
-            nav h1 {
-                font-size: 1.1rem;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            nav .nav-links {
-                display: none;
-                position: absolute;
-                top: 60px;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-                flex-direction: column;
-                padding: 1rem;
-                gap: 0.5rem;
-                width: 100%;
-                border-top: 1px solid rgba(255, 255, 255, 0.2);
-            }
-
-            nav .nav-links.active {
-                display: flex;
-                z-index: 1001;
-            }
-
-            nav button, nav a {
-                width: 100%;
-                text-align: left;
-            }
-
-            .hero {
-                padding: 2rem 0;
-            }
-
-            .hero h2 {
-                font-size: 1.5rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .hero .buttons {
-                flex-direction: column;
-            }
-
-            .hero button {
-                width: 100%;
-            }
-
-            main {
-                margin-top: 150px;
-            }
-
-            section {
-                padding: 1.5rem;
-            }
-
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            h3 {
-                font-size: 1.1rem;
-            }
-
-            form {
-                max-width: 100%;
-            }
-
-            .ql-editor {
-                min-height: 150px;
-                max-height: 300px;
-            }
-        }
-
-        /* ========== LOADING & STATUS ========== */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #3b82f6;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .success-message {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-            padding: 1rem;
-            border-radius: 6px;
+        .locked-overlay h3 {
+            color: white;
             margin-bottom: 1rem;
         }
 
-        .error-message {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #991b1b;
-            padding: 1rem;
-            border-radius: 6px;
+        .locked-icon {
+            font-size: 3rem;
             margin-bottom: 1rem;
         }
 
-        /* ========== UTILITY CLASSES ========== */
-        .text-center {
-            text-align: center;
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
         }
 
-        .mt-2 {
-            margin-top: 2rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 2rem;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .link {
-            color: #3b82f6;
-            text-decoration: none;
-            cursor: pointer;
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
             font-weight: 500;
         }
 
-        .link:hover {
-            color: #1e40af;
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group input[type="checkbox"],
+        .form-group input[type="radio"],
+        .form-group input[type="file"],
+        .form-group input[type="color"],
+        .form-group input[type="number"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .form-group input[type="color"] {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        /* Rich Text Editor */
+        .editor-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .ql-toolbar {
+            border-bottom: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+
+        .ql-container {
+            font-size: 1rem;
+            min-height: 300px;
+        }
+
+        .ql-editor {
+            padding: 1rem;
+        }
+
+        /* File Upload */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.75rem;
+            background: #e9ecef;
+            border: 2px dashed #1e3a8a;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-input-label:hover {
+            background: #dee2e6;
+        }
+
+        .file-input-label.dragover {
+            background: #d1ecf1;
+            border-color: #0c5460;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: #28a745;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        button[type="submit"], .btn-primary {
+            background: #1e3a8a;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover, .btn-primary:hover {
+            background: #2c5ba9;
+        }
+
+        button[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-small {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            width: auto;
+            display: inline-block;
+        }
+
+        .form-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .form-link a {
+            color: #1e3a8a;
+            text-decoration: none;
+        }
+
+        .form-link a:hover {
             text-decoration: underline;
         }
 
-        footer {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-            text-align: center;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
             padding: 2rem;
-            margin-top: 3rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* About section */
+        .about-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .about-section .icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .admin-photo {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        /* Admin Panel Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 0.75rem 1.5rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .admin-tab.active {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        /* User management */
+        .user-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border-left: 4px solid #1e3a8a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Alert/Message */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Subscription Notice */
+        .subscription-notice {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .subscription-notice h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        /* Article Content Display */
+        .article-content {
+            line-height: 1.8;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .article-content h1, .article-content h2, .article-content h3 {
+            color: #1e3a8a;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-content strong {
+            color: #1e3a8a;
+        }
+
+        /* Color preview */
+        .color-preview {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            margin-left: 10px;
+            vertical-align: middle;
+            border: 2px solid #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-tabs {
+                flex-direction: column;
+            }
+
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-actions {
+                margin-top: 1rem;
+                width: 100%;
+            }
+
+            .ql-container {
+                min-height: 200px;
+            }
+
+            .flash-message-display {
+                height: 40px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Flash Message Display -->
-    <div id="flashMessage" class="flash-message-display hidden">
-        <div class="flash-message-content" id="flashMessageContent"></div>
-        <button class="flash-message-close" onclick="document.getElementById('flashMessage').classList.add('hidden')">✕</button>
+    <div id="flash-message" class="flash-message-display hidden">
+        <div class="flash-message-content" id="flash-content"></div>
+        <button class="flash-message-close" onclick="closeFlashMessage()">×</button>
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar">
+    <nav>
         <div class="container">
             <h1>📊 Uncover Markets</h1>
-            <button class="hamburger" id="hamburger" onclick="toggleNavMenu()">☰</button>
-            <div class="nav-links" id="navLinks">
-                <a id="homeLink" href="#" onclick="showSection('home'); return false;">Home</a>
-                <div id="authButtons">
-                    <button id="loginBtn" onclick="toggleAuthModal('login')">Login</button>
-                    <button id="signupBtn" onclick="toggleAuthModal('signup')">Sign Up</button>
-                </div>
-                <div id="userButtons" style="display: none;">
-                    <a href="#" onclick="showSection('dashboard'); return false;">Dashboard</a>
-                    <a href="#" onclick="showSection('newsletter'); return false;">Newsletter</a>
-                    <a href="#" onclick="showSection('admin'); return false;">Admin</a>
-                    <button id="logoutBtn" onclick="logout()">Logout</button>
-                </div>
-            </div>
+            <div id="nav-buttons"></div>
         </div>
     </nav>
 
-    <main>
-        <!-- Home Section -->
-        <section id="homeSection">
-            <div class="hero">
-                <div class="container">
-                    <h2>Welcome to Uncover Markets</h2>
-                    <p>Your source for stock market analysis and insights</p>
-                    <p style="font-size: 0.95rem; color: #1e3a8a; margin-bottom: 1.5rem;">Get access to exclusive premium content, in-depth analysis, and expert insights.</p>
-                    <div class="buttons">
-                        <button onclick="toggleAuthModal('login')">Get Started</button>
-                        <button onclick="document.location.href='mailto:uncover.markets@gmail.com'" style="background: white; color: #1e40af; border: 2px solid #1e40af;">Contact Us</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <section style="text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 10px; padding: 2rem;">
-                    <h2>About Us</h2>
-                    <p>Uncover Markets is your trusted platform for deep market analysis, stock recommendations, and investment insights. We provide exclusive content to help you make informed investment decisions.</p>
-                    <p style="margin-top: 1rem; color: #6b7280;">📧 Contact: uncover.markets@gmail.com</p>
-                </section>
-            </div>
-        </section>
-
-        <!-- Auth Modal -->
-        <div id="authModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center;">
-            <div style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                <h3 id="authModalTitle" style="text-align: center; margin-bottom: 1.5rem;">Login</h3>
-                
-                <form id="authForm" onsubmit="handleAuth(event)">
-                    <div id="authError" class="form-error" style="display: none;"></div>
-                    
-                    <label>Email:</label>
-                    <input type="email" id="authEmail" required placeholder="your@email.com">
-                    
-                    <label>Password:</label>
-                    <input type="password" id="authPassword" required placeholder="Enter password">
-                    
-                    <div id="mobileSection" style="display: none;">
-                        <label>Mobile Number (Sign Up Only):</label>
-                        <input type="text" id="authMobile" placeholder="+91 XXXXX XXXXX">
-                    </div>
-                    
-                    <button type="submit" style="margin-top: 1rem;">
-                        <span id="authSubmitText">Login</span>
-                    </button>
-                </form>
-                
-                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-                    <span id="authToggleText">Don't have an account?</span>
-                    <span class="link" onclick="toggleAuthMode()" style="margin-left: 0.5rem;">
-                        <span id="authToggleLink">Sign Up</span>
-                    </span>
-                </p>
-                
-                <button onclick="closeAuthModal()" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">✕</button>
-            </div>
-        </div>
-
-        <!-- Dashboard Section -->
-        <section id="dashboardSection" class="hidden">
-            <div class="container">
-                <h2>Your Dashboard</h2>
-                <div id="userInfo" style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 2rem;">
-                    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
-                    <p style="margin-top: 0.5rem;"><strong>Status:</strong> Premium Member</p>
-                </div>
-                
-                <h3>Quick Links</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                    <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 1.5rem; border-radius: 8px; cursor: pointer;" onclick="showSection('newsletter')">
-                        <h4 style="color: #1e40af; margin-bottom: 0.5rem;">📰 Newsletter</h4>
-                        <p style="font-size: 0.9rem; color: #1e3a8a;">Access exclusive newsletters</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 1.5rem; border-radius: 8px; cursor: pointer;" onclick="showSection('admin')">
-                        <h4 style="color: #1e40af; margin-bottom: 0.5rem;">⚙️ Admin Panel</h4>
-                        <p style="font-size: 0.9rem; color: #1e3a8a;">Manage content</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Newsletter Section -->
-        <section id="newsletterSection" class="hidden">
-            <div class="container">
-                <h2>📰 Newsletter Archive</h2>
-                <div id="newsletterList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
-                    <p style="color: #6b7280; grid-column: 1/-1;">No newsletters available yet.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Admin Section -->
-        <section id="adminSection" class="hidden">
-            <div class="container">
-                <h2>⚙️ Admin Panel</h2>
-                
-                <h3>Upload Newsletter</h3>
-                <form onsubmit="handleNewsletterUpload(event)">
-                    <label>Newsletter Title:</label>
-                    <input type="text" id="newsletterTitle" required placeholder="Enter newsletter title">
-                    
-                    <label>Newsletter Description:</label>
-                    <textarea id="newsletterDescription" placeholder="Enter description"></textarea>
-                    
-                    <label>PDF File:</label>
-                    <div class="file-upload-area" onclick="document.getElementById('newsletterFile').click()">
-                        <p>Click to upload or drag and drop</p>
-                        <input type="file" id="newsletterFile" accept=".pdf" required>
-                    </div>
-                    
-                    <button type="submit" style="margin-top: 1rem;">Upload Newsletter</button>
-                </form>
-                
-                <h3 style="margin-top: 3rem;">Admin Message (Flash Banner)</h3>
-                <form onsubmit="handleFlashMessage(event)">
-                    <label>Message Content:</label>
-                    <textarea id="flashContent" placeholder="Enter message to display in scrolling banner" required></textarea>
-                    
-                    <label style="margin-top: 1rem;">Duration (seconds):</label>
-                    <input type="number" id="flashDuration" value="10" min="5" max="60">
-                    
-                    <button type="submit" style="margin-top: 1rem;">Display Flash Message</button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <footer>
+    <!-- Hero Section -->
+    <div class="hero">
         <div class="container">
-            <p>&copy; 2025 Uncover Markets. All rights reserved.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Your trusted platform for market insights and analysis</p>
+            <h2>Welcome to Uncover Markets</h2>
+            <p>Your source for stock market analysis and insights</p>
         </div>
-    </footer>
+    </div>
 
-    <!-- Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Subscription Notice (for non-paid users) -->
+        <div id="subscription-notice" class="subscription-notice hidden">
+            <div class="locked-icon">🔒</div>
+            <h3>Upgrade to Paid Subscription</h3>
+            <p>Get access to exclusive premium content, in-depth analysis, and expert insights.</p>
+            <p><strong>Contact us at: uncover.markets@gmail.com</strong></p>
+        </div>
 
-    <!-- Quill Editor -->
+        <!-- About Section -->
+        <section id="about-section" class="about-section">
+            <div class="icon">👤</div>
+            <h2>About Me</h2>
+            <div id="admin-photo-display"></div>
+            <p id="intro-text">Use some description which we can change later - This is the default introduction text. You can update this by editing the admin panel.</p>
+        </section>
+
+        <!-- Newsletter Subscribe -->
+        <section id="newsletter-subscribe" class="card">
+            <h3>Subscribe to our newsletter for daily market insights, stock analysis, and investment tips directly in your inbox.</h3>
+        </section>
+
+        <!-- Latest Articles -->
+        <section id="home-articles">
+            <h2 class="section-title">Latest Articles</h2>
+            <div id="home-articles-list" class="card-grid"></div>
+        </section>
+
+        <!-- All Articles Section (Hidden by default) -->
+        <section id="articles-section" class="hidden">
+            <h2 class="section-title">All Articles</h2>
+            <div id="articles-list" class="card-grid"></div>
+        </section>
+
+        <!-- Newsletters Section (Hidden by default) -->
+        <section id="newsletters-section" class="hidden">
+            <h2 class="section-title">Newsletters</h2>
+            <div id="newsletters-list" class="card-grid"></div>
+        </section>
+
+        <!-- Admin Panel (Hidden by default) -->
+        <section id="admin-section" class="hidden">
+            <h2 class="section-title">Admin Panel</h2>
+            
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="showAdminTab('add-article')">Add Article</button>
+                <button class="admin-tab" onclick="showAdminTab('add-newsletter')">Add Newsletter</button>
+                <button class="admin-tab" onclick="showAdminTab('manage-photos')">Manage Photos</button>
+                <button class="admin-tab" onclick="showAdminTab('flash-message')">Flash Message</button>
+                <button class="admin-tab" onclick="showAdminTab('update-intro')">Update Introduction</button>
+                <button class="admin-tab" onclick="showAdminTab('manage-users')">Manage Users</button>
+                <button class="admin-tab" onclick="showAdminTab('manage-content')">Manage Content</button>
+            </div>
+
+            <!-- Add Article Tab -->
+            <div id="add-article-tab" class="admin-content active card">
+                <h3>Add New Article</h3>
+                <form id="add-article-form">
+                    <div class="form-group">
+                        <label>Article Title</label>
+                        <input type="text" id="article-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="article-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Market Analysis">Market Analysis</option>
+                            <option value="Daily News">Daily News</option>
+                            <option value="Weekly News">Weekly News</option>
+                            <option value="Sector Analysis">Sector Analysis</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Article Content (with formatting)</label>
+                        <div id="article-editor" class="editor-container"></div>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Access Level:</strong></label>
+                        <div>
+                            <label>
+                                <input type="radio" name="article-access" value="free" checked>
+                                Free (Everyone can access)
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="article-access" value="subscriber">
+                                Registered Subscribers Only
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="article-access" value="paid">
+                                Paid Subscribers Only
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit">Publish Article</button>
+                </form>
+            </div>
+
+            <!-- Add Newsletter Tab -->
+            <div id="add-newsletter-tab" class="admin-content card">
+                <h3>Add New Newsletter</h3>
+                <form id="add-newsletter-form">
+                    <div class="form-group">
+                        <label>Newsletter Title</label>
+                        <input type="text" id="newsletter-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Newsletter Description</label>
+                        <textarea id="newsletter-description" placeholder="Enter newsletter description..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>PDF File URL</label>
+                        <input type="url" id="newsletter-pdf-link" placeholder="https://example.com/newsletter.pdf" required>
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">Paste the URL of your PDF file (Google Drive, Dropbox, etc.)</small>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Access Level:</strong></label>
+                        <div>
+                            <label>
+                                <input type="radio" name="newsletter-access" value="free" checked>
+                                Free (Everyone can access)
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="newsletter-access" value="subscriber">
+                                Registered Subscribers Only
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="newsletter-access" value="paid">
+                                Paid Subscribers Only
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" id="publish-newsletter-btn">Publish Newsletter</button>
+                </form>
+            </div>
+
+            <!-- Manage Photos Tab -->
+            <div id="manage-photos-tab" class="admin-content card">
+                <h3>Upload Admin Photo</h3>
+                <div class="alert alert-info">This photo will display in the About Me section</div>
+                <form id="upload-photo-form">
+                    <div class="form-group">
+                        <label>Upload Photo (JPG, PNG, JPEG)</label>
+                        <div class="file-input-wrapper">
+                            <label for="admin-photo-file" class="file-input-label" id="photo-label">
+                                📸 Click to upload photo or drag & drop
+                            </label>
+                            <input type="file" id="admin-photo-file" accept="image/*">
+                            <div class="file-name" id="photo-file-name"></div>
+                            <div class="upload-progress hidden" id="photo-progress">
+                                <div class="upload-progress-bar" id="photo-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="current-photo-display" style="margin-top: 1rem;"></div>
+                    <button type="submit">Upload Photo</button>
+                </form>
+            </div>
+
+            <!-- Flash Message Tab -->
+            <div id="flash-message-tab" class="admin-content card">
+                <h3>Manage Flash Message</h3>
+                <form id="flash-message-form">
+                    <div class="form-group">
+                        <label>Message Text</label>
+                        <input type="text" id="flash-text" placeholder="Enter your message" required>
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">Text that scrolls across the top</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Text Size (pixels)</label>
+                        <input type="number" id="flash-size" min="10" max="50" value="16">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Scroll Speed (seconds)</label>
+                        <input type="number" id="flash-speed" min="5" max="60" value="10" step="1">
+                        <small style="color: #666; margin-top: 0.5rem; display: block;">How long to complete one scroll (5-60 seconds)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Text Color</label>
+                        <input type="color" id="flash-color" value="#ffffff">
+                        <div class="color-preview" id="text-color-preview" style="background: #ffffff;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Background Color</label>
+                        <input type="color" id="flash-bg-color" value="#1e3a8a">
+                        <div class="color-preview" id="bg-color-preview" style="background: #1e3a8a;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="flash-enabled" checked>
+                            Enable Flash Message
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Preview:</strong>
+                        <div id="flash-preview" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px; overflow: hidden; height: 50px; display: flex; align-items: center;"></div>
+                    </div>
+
+                    <button type="submit" style="margin-top: 1rem;">Save Flash Message</button>
+                    <button type="button" class="btn-secondary" onclick="deleteFlashMessage()" style="width: auto; margin-top: 1rem;">Delete Message</button>
+                </form>
+            </div>
+
+            <!-- Update Introduction Tab -->
+            <div id="update-intro-tab" class="admin-content card">
+                <h3>Update Introduction</h3>
+                <form id="update-intro-form">
+                    <div class="form-group">
+                        <label>Your Introduction Text</label>
+                        <textarea id="intro-content" required></textarea>
+                    </div>
+                    <button type="submit">Update Introduction</button>
+                </form>
+            </div>
+
+            <!-- Manage Users Tab -->
+            <div id="manage-users-tab" class="admin-content card">
+                <h3>Manage Users & Subscriptions</h3>
+                <div class="alert alert-info">
+                    <strong>User Levels:</strong><br>
+                    • <strong>Registered:</strong> Can access subscriber-only content<br>
+                    • <strong>Paid:</strong> Can access all premium content (requires your approval)
+                </div>
+                <div id="users-list"></div>
+            </div>
+
+            <!-- Manage Content Tab -->
+            <div id="manage-content-tab" class="admin-content card">
+                <h3>Manage Articles & Newsletters</h3>
+                <h4>Articles</h4>
+                <div id="manage-articles-list"></div>
+                <h4 style="margin-top: 2rem;">Newsletters</h4>
+                <div id="manage-newsletters-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('login-modal')">&times;</span>
+            <h2>Login</h2>
+            <div id="login-message"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Login</button>
+                <div class="form-link">
+                    Don't have an account? <a href="#" onclick="switchToRegister()">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('register-modal')">&times;</span>
+            <h2>Create Account</h2>
+            <div id="register-message"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="register-phone" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="register-password" required minlength="6">
+                </div>
+                <button type="submit">Create Account</button>
+                <div class="form-link">
+                    Already have an account? <a href="#" onclick="switchToLogin()">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Article View Modal -->
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('article-modal')">&times;</span>
+            <div id="article-view"></div>
+        </div>
+    </div>
+
+    <!-- Quill Rich Text Editor Library -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <script>
-        // Firebase Configuration
+    <!-- Firebase SDK and Application Logic -->
+    <script type="module">
+        // ==========================================
+        // FIREBASE INITIALIZATION
+        // ==========================================
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            signOut 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc,
+            query,
+            orderBy,
+            limit,
+            setDoc,
+            getDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            uploadBytesResumable,
+            getDownloadURL,
+            deleteObject
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAAgMmS-9XvwLyd85bGLMZvdQfM8mW1wzc",
             authDomain: "uncover-markets.firebaseapp.com",
             projectId: "uncover-markets",
             storageBucket: "uncover-markets.firebasestorage.app",
             messagingSenderId: "216882063477",
-            appId: "1:216882063477:web:4f8b1e2a3c9d5e7f6g"
+            appId: "1:216882063477:web:868356f7da4128df64703c",
+            measurementId: "G-9PBZ62PMDW"
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
 
+        // Make available globally
+        window.auth = auth;
+        window.db = db;
+        window.storage = storage;
+
+        // Admin email
+        const ADMIN_EMAIL = 'uncover.markets@gmail.com';
+        
+        // Current user state
         let currentUser = null;
-        let authMode = 'login'; // 'login' or 'signup'
+        let isAdmin = false;
+        let userLevel = 'free';
+        let userData = null;
 
-        // Navigation Scroll Effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
+        // Rich Text Editor instance
+        let quillEditor = null;
 
-        // Toggle Mobile Menu
-        function toggleNavMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
+        // Photo upload state
+        let selectedPhotoFile = null;
 
-        // Close mobile menu when a link is clicked
-        document.querySelectorAll('#navLinks a, #navLinks button').forEach(item => {
-            item.addEventListener('click', () => {
-                document.getElementById('navLinks').classList.remove('active');
-            });
-        });
+        // ==========================================
+        // FLASH MESSAGE FUNCTIONS
+        // ==========================================
+        window.closeFlashMessage = function() {
+            document.getElementById('flash-message').classList.add('hidden');
+        };
 
-        // Authentication Modal Functions
-        function toggleAuthModal(mode) {
-            authMode = mode;
-            document.getElementById('authModal').style.display = 'flex';
-            updateAuthUI();
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('authForm').reset();
-            document.getElementById('authError').style.display = 'none';
-        }
-
-        function toggleAuthMode() {
-            authMode = authMode === 'login' ? 'signup' : 'login';
-            updateAuthUI();
-        }
-
-        function updateAuthUI() {
-            const mobileSection = document.getElementById('mobileSection');
-            const title = document.getElementById('authModalTitle');
-            const submitText = document.getElementById('authSubmitText');
-            const toggleText = document.getElementById('authToggleText');
-            const toggleLink = document.getElementById('authToggleLink');
-
-            if (authMode === 'signup') {
-                title.textContent = 'Create Account';
-                submitText.textContent = 'Sign Up';
-                toggleText.textContent = 'Already have an account?';
-                toggleLink.textContent = 'Login';
-                mobileSection.style.display = 'block';
-            } else {
-                title.textContent = 'Login';
-                submitText.textContent = 'Login';
-                toggleText.textContent = "Don't have an account?";
-                toggleLink.textContent = 'Sign Up';
-                mobileSection.style.display = 'none';
-            }
-        }
-
-        // Handle Authentication
-        function handleAuth(event) {
-            event.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const mobile = document.getElementById('authMobile').value;
-            const errorDiv = document.getElementById('authError');
-
-            if (authMode === 'login') {
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(userCredential => {
-                        closeAuthModal();
-                        showFlashMessage('Successfully logged in!', 5);
-                    })
-                    .catch(error => {
-                        errorDiv.textContent = error.message;
-                        errorDiv.style.display = 'block';
-                    });
-            } else {
-                if (!mobile) {
-                    errorDiv.textContent = 'Please enter your mobile number';
-                    errorDiv.style.display = 'block';
-                    return;
+        window.deleteFlashMessage = async function() {
+            if (confirm('Delete the flash message?')) {
+                try {
+                    await deleteDoc(doc(db, 'settings', 'flashMessage'));
+                    alert('Flash message deleted!');
+                    document.getElementById('flash-message').classList.add('hidden');
+                    document.getElementById('flash-text').value = '';
+                } catch (error) {
+                    alert('Error deleting flash message: ' + error.message);
                 }
-
-                auth.createUserWithEmailAndPassword(email, password)
-                    .then(userCredential => {
-                        // Store user data in Firestore
-                        return db.collection('users').doc(userCredential.user.uid).set({
-                            email: email,
-                            mobile: mobile,
-                            createdAt: new Date(),
-                            isPremium: false
-                        });
-                    })
-                    .then(() => {
-                        closeAuthModal();
-                        showFlashMessage('Account created successfully!', 5);
-                    })
-                    .catch(error => {
-                        errorDiv.textContent = error.message;
-                        errorDiv.style.display = 'block';
-                    });
             }
-        }
+        };
 
-        // Logout
-        function logout() {
-            auth.signOut().then(() => {
-                showFlashMessage('Logged out successfully!', 5);
-                showSection('home');
-            }).catch(error => {
-                console.error('Logout error:', error);
-            });
-        }
-
-        // Monitor Auth State
-        auth.onAuthStateChanged(user => {
-            currentUser = user;
-            const authButtons = document.getElementById('authButtons');
-            const userButtons = document.getElementById('userButtons');
-
-            if (user) {
-                authButtons.style.display = 'none';
-                userButtons.style.display = 'flex';
-                document.getElementById('displayEmail').textContent = user.email;
-            } else {
-                authButtons.style.display = 'flex';
-                userButtons.style.display = 'none';
-            }
-        });
-
-        // Show/Hide Sections
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('section').forEach(section => {
-                section.classList.add('hidden');
-            });
-
-            // Show selected section
-            if (sectionName === 'home') {
-                document.getElementById('homeSection').classList.remove('hidden');
-            } else if (sectionName === 'dashboard') {
-                if (!currentUser) {
-                    showFlashMessage('Please login to access dashboard', 5);
-                    toggleAuthModal('login');
-                    return;
-                }
-                document.getElementById('dashboardSection').classList.remove('hidden');
-            } else if (sectionName === 'newsletter') {
-                if (!currentUser) {
-                    showFlashMessage('Please login to access newsletters', 5);
-                    toggleAuthModal('login');
-                    return;
-                }
-                document.getElementById('newsletterSection').classList.remove('hidden');
-                loadNewsletters();
-            } else if (sectionName === 'admin') {
-                if (!currentUser || currentUser.email !== 'uncover.markets@gmail.com') {
-                    showFlashMessage('Admin access denied', 5);
-                    showSection('home');
-                    return;
-                }
-                document.getElementById('adminSection').classList.remove('hidden');
-            }
-
-            // Close mobile menu
-            document.getElementById('navLinks').classList.remove('active');
-        }
-
-        // Flash Message
-        function showFlashMessage(message, duration = 10) {
-            const flashDiv = document.getElementById('flashMessage');
-            const flashContent = document.getElementById('flashMessageContent');
-            flashContent.textContent = message;
-            flashDiv.classList.remove('hidden');
-            
-            setTimeout(() => {
-                flashDiv.classList.add('hidden');
-            }, duration * 1000);
-        }
-
-        // Handle Newsletter Upload
-        function handleNewsletterUpload(event) {
-            event.preventDefault();
-            
-            if (!currentUser || currentUser.email !== 'uncover.markets@gmail.com') {
-                showFlashMessage('Admin access denied', 5);
-                return;
-            }
-
-            const title = document.getElementById('newsletterTitle').value;
-            const description = document.getElementById('newsletterDescription').value;
-            const file = document.getElementById('newsletterFile').files[0];
-
-            if (!file) {
-                showFlashMessage('Please select a file', 5);
-                return;
-            }
-
-            const storageRef = storage.ref(`newsletters/${Date.now()}_${file.name}`);
-            
-            storageRef.put(file).then(snapshot => {
-                return storageRef.getDownloadURL();
-            }).then(downloadURL => {
-                return db.collection('newsletters').add({
-                    title: title,
-                    description: description,
-                    fileUrl: downloadURL,
-                    uploadedAt: new Date(),
-                    uploadedBy: currentUser.email
+        // ==========================================
+        // INITIALIZE QUILL EDITOR
+        // ==========================================
+        function initializeQuillEditor() {
+            if (!quillEditor) {
+                quillEditor = new Quill('#article-editor', {
+                    theme: 'snow',
+                    placeholder: 'Write your article here... You can format text, add links, and insert images!',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link', 'image'],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['clean']
+                        ]
+                    }
                 });
-            }).then(() => {
-                showFlashMessage('Newsletter uploaded successfully!', 5);
-                document.getElementById('adminSection').querySelector('form').reset();
-            }).catch(error => {
-                showFlashMessage('Error uploading newsletter: ' + error.message, 5);
+
+                // Handle image insertion
+                const imageHandler = () => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
+                    input.click();
+
+                    input.onchange = async () => {
+                        const file = input.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const range = quillEditor.getSelection();
+                                quillEditor.insertEmbed(range.index, 'image', e.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    };
+                };
+
+                quillEditor.getModule('toolbar').addHandler('image', imageHandler);
+            }
+        }
+
+        // ==========================================
+        // PHOTO UPLOAD HANDLERS
+        // ==========================================
+        const photoInput = document.getElementById('admin-photo-file');
+        const photoLabel = document.getElementById('photo-label');
+        const photoFileName = document.getElementById('photo-file-name');
+        const photoProgress = document.getElementById('photo-progress');
+
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handlePhotoSelection(file);
+            }
+        });
+
+        photoLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoLabel.classList.add('dragover');
+        });
+
+        photoLabel.addEventListener('dragleave', () => {
+            photoLabel.classList.remove('dragover');
+        });
+
+        photoLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoLabel.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handlePhotoSelection(file);
+            } else {
+                alert('Please drop an image file');
+            }
+        });
+
+        function handlePhotoSelection(file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 5 MB.');
+                return;
+            }
+            selectedPhotoFile = file;
+            photoFileName.textContent = `📸 Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        }
+
+        async function uploadPhotoToStorage(file) {
+            return new Promise((resolve, reject) => {
+                const timestamp = Date.now();
+                const fileName = `admin-photos/${timestamp}-${file.name}`;
+                const storageRef = ref(storage, fileName);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                photoProgress.classList.remove('hidden');
+
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        document.getElementById('photo-progress-bar').style.width = progress + '%';
+                    },
+                    (error) => {
+                        photoProgress.classList.add('hidden');
+                        console.error('Upload error:', error);
+                        reject(error);
+                    },
+                    async () => {
+                        try {
+                            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            photoProgress.classList.add('hidden');
+                            resolve(downloadUrl);
+                        } catch (error) {
+                            console.error('Error getting download URL:', error);
+                            reject(error);
+                        }
+                    }
+                );
             });
         }
 
-        // Load Newsletters
-        function loadNewsletters() {
-            db.collection('newsletters').orderBy('uploadedAt', 'desc').get().then(snapshot => {
-                const list = document.getElementById('newsletterList');
-                list.innerHTML = '';
+        // ==========================================
+        // AUTH STATE OBSERVER
+        // ==========================================
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            isAdmin = user && user.email === ADMIN_EMAIL;
+            
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    userLevel = userData.subscriptionLevel || 'subscriber';
+                } else {
+                    userLevel = 'subscriber';
+                }
+                
+                if (isAdmin) {
+                    userLevel = 'admin';
+                }
+                
+                console.log('User signed in:', user.email, 'Level:', userLevel);
+            } else {
+                userLevel = 'free';
+                userData = null;
+                console.log('User signed out');
+            }
+            
+            updateNavigation();
+            await loadContent();
+        });
 
+        // ==========================================
+        // NAVIGATION FUNCTIONS
+        // ==========================================
+        function updateNavigation() {
+            const navButtons = document.getElementById('nav-buttons');
+            
+            if (currentUser) {
+                let badge = '';
+                if (isAdmin) {
+                    badge = '<span class="user-badge badge-admin">ADMIN</span>';
+                } else if (userLevel === 'paid') {
+                    badge = '<span class="user-badge badge-paid">PAID</span>';
+                } else if (userLevel === 'subscriber') {
+                    badge = '<span class="user-badge badge-subscriber">SUBSCRIBER</span>';
+                }
+                
+                navButtons.innerHTML = `
+                    <div>
+                        <a href="#" onclick="showHome()">Home</a>
+                        <a href="#" onclick="showArticles()">Articles</a>
+                        <a href="#" onclick="showNewsletters()">Newsletters</a>
+                        ${isAdmin ? '<a href="#" onclick="showAdmin()">Admin</a>' : ''}
+                    </div>
+                    <div>
+                        ${badge}
+                        <button onclick="handleLogout()">Logout</button>
+                    </div>
+                `;
+            } else {
+                navButtons.innerHTML = `
+                    <div>
+                        <a href="#" onclick="showHome()">Home</a>
+                        <button onclick="openModal('login-modal')">Login</button>
+                        <button onclick="openModal('register-modal')">Register</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // ACCESS CONTROL FUNCTIONS
+        // ==========================================
+        function canAccessContent(contentAccessLevel) {
+            if (contentAccessLevel === 'free') return true;
+            if (!currentUser) return false;
+            if (isAdmin) return true;
+            if (contentAccessLevel === 'subscriber') return userLevel === 'subscriber' || userLevel === 'paid';
+            if (contentAccessLevel === 'paid') return userLevel === 'paid';
+            return false;
+        }
+
+        function getAccessBadgeHTML(accessLevel) {
+            const badges = {
+                'free': '<span class="access-badge access-free">FREE</span>',
+                'subscriber': '<span class="access-badge access-subscriber">SUBSCRIBERS</span>',
+                'paid': '<span class="access-badge access-paid">PAID ONLY</span>'
+            };
+            return badges[accessLevel] || badges['free'];
+        }
+
+        function getLockedOverlayHTML(accessLevel) {
+            const messages = {
+                'subscriber': {
+                    title: 'Subscribers Only',
+                    message: 'Register and login to access this content',
+                    action: 'openModal("register-modal")',
+                    buttonText: 'Register Now'
+                },
+                'paid': {
+                    title: 'Paid Subscribers Only',
+                    message: 'Upgrade to paid subscription for exclusive premium content',
+                    action: 'showSubscriptionNotice()',
+                    buttonText: 'Learn More'
+                }
+            };
+            
+            const msg = messages[accessLevel];
+            return `
+                <div class="locked-overlay">
+                    <div class="locked-icon">🔒</div>
+                    <h3>${msg.title}</h3>
+                    <p>${msg.message}</p>
+                    <button class="btn-primary" onclick="${msg.action}">${msg.buttonText}</button>
+                </div>
+            `;
+        }
+
+        window.showSubscriptionNotice = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('subscription-notice').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('subscription-notice').classList.add('hidden');
+            }, 10000);
+        };
+
+        // ==========================================
+        // MODAL FUNCTIONS
+        // ==========================================
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        };
+
+        window.switchToRegister = function() {
+            closeModal('login-modal');
+            openModal('register-modal');
+        };
+
+        window.switchToLogin = function() {
+            closeModal('register-modal');
+            openModal('login-modal');
+        };
+
+        // ==========================================
+        // AUTHENTICATION HANDLERS
+        // ==========================================
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const messageDiv = document.getElementById('login-message');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                messageDiv.innerHTML = '<div class="alert alert-success">Login successful!</div>';
+                setTimeout(() => closeModal('login-modal'), 1000);
+            } catch (error) {
+                console.error('Login error:', error);
+                messageDiv.innerHTML = `<div class="alert alert-error">Login failed: ${error.message}</div>`;
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+            const password = document.getElementById('register-password').value;
+            const messageDiv = document.getElementById('register-message');
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    subscriptionLevel: 'subscriber',
+                    registeredAt: new Date().toISOString(),
+                    approvedAt: null
+                });
+
+                messageDiv.innerHTML = '<div class="alert alert-success">Registration successful! You now have access to subscriber content.</div>';
+                setTimeout(() => closeModal('register-modal'), 2000);
+            } catch (error) {
+                console.error('Registration error:', error);
+                messageDiv.innerHTML = `<div class="alert alert-error">Registration failed: ${error.message}</div>`;
+            }
+        });
+
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+                showHome();
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed: ' + error.message);
+            }
+        };
+
+        // ==========================================
+        // NAVIGATION FUNCTIONS
+        // ==========================================
+        window.showHome = function() {
+            document.getElementById('home-articles').classList.remove('hidden');
+            document.getElementById('articles-section').classList.add('hidden');
+            document.getElementById('newsletters-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('about-section').classList.remove('hidden');
+            document.getElementById('newsletter-subscribe').classList.remove('hidden');
+            loadHomeArticles();
+        };
+
+        window.showArticles = function() {
+            document.getElementById('home-articles').classList.add('hidden');
+            document.getElementById('articles-section').classList.remove('hidden');
+            document.getElementById('newsletters-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('newsletter-subscribe').classList.add('hidden');
+            loadAllArticles();
+        };
+
+        window.showNewsletters = function() {
+            document.getElementById('home-articles').classList.add('hidden');
+            document.getElementById('articles-section').classList.add('hidden');
+            document.getElementById('newsletters-section').classList.remove('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('newsletter-subscribe').classList.add('hidden');
+            loadNewsletters();
+        };
+
+        window.showAdmin = function() {
+            if (!isAdmin) {
+                alert('Access denied. Admin only.');
+                return;
+            }
+            document.getElementById('home-articles').classList.add('hidden');
+            document.getElementById('articles-section').classList.add('hidden');
+            document.getElementById('newsletters-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.remove('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('newsletter-subscribe').classList.add('hidden');
+            loadAdminContent();
+        };
+
+        // ==========================================
+        // ADMIN TAB FUNCTIONS
+        // ==========================================
+        window.showAdminTab = function(tabName) {
+            document.querySelectorAll('.admin-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'add-article') {
+                setTimeout(() => {
+                    initializeQuillEditor();
+                }, 100);
+            } else if (tabName === 'manage-photos') {
+                loadCurrentPhoto();
+            } else if (tabName === 'flash-message') {
+                loadFlashMessageSettings();
+            } else if (tabName === 'manage-users') {
+                loadUsers();
+            } else if (tabName === 'manage-content') {
+                loadManageContent();
+            } else if (tabName === 'update-intro') {
+                loadCurrentIntro();
+            }
+        };
+
+        // ==========================================
+        // CONTENT LOADING FUNCTIONS
+        // ==========================================
+        async function loadContent() {
+            await loadHomeArticles();
+            await loadIntroduction();
+            await loadFlashMessage();
+            await loadAdminPhoto();
+        }
+
+        async function loadAdminPhoto() {
+            try {
+                const docRef = doc(db, 'settings', 'adminPhoto');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const photoUrl = docSnap.data().photoUrl;
+                    document.getElementById('admin-photo-display').innerHTML = `<img src="${photoUrl}" alt="Admin Photo" class="admin-photo">`;
+                }
+            } catch (error) {
+                console.error('Error loading admin photo:', error);
+            }
+        }
+
+        async function loadCurrentPhoto() {
+            try {
+                const docRef = doc(db, 'settings', 'adminPhoto');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const photoUrl = docSnap.data().photoUrl;
+                    document.getElementById('current-photo-display').innerHTML = `
+                        <div>
+                            <strong>Current Photo:</strong><br>
+                            <img src="${photoUrl}" alt="Current Admin Photo" class="admin-photo" style="max-width: 150px;">
+                            <br>
+                            <button type="button" class="btn-danger btn-small" onclick="deleteAdminPhoto()">Delete Photo</button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading current photo:', error);
+            }
+        }
+
+        window.deleteAdminPhoto = async function() {
+            if (confirm('Delete the current admin photo?')) {
+                try {
+                    await deleteDoc(doc(db, 'settings', 'adminPhoto'));
+                    alert('Photo deleted!');
+                    document.getElementById('current-photo-display').innerHTML = '';
+                    document.getElementById('admin-photo-display').innerHTML = '';
+                    selectedPhotoFile = null;
+                    document.getElementById('admin-photo-file').value = '';
+                    document.getElementById('photo-file-name').textContent = '';
+                } catch (error) {
+                    alert('Error deleting photo: ' + error.message);
+                }
+            }
+        };
+
+        async function loadFlashMessage() {
+            try {
+                const docRef = doc(db, 'settings', 'flashMessage');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const flash = docSnap.data();
+                    const flashDiv = document.getElementById('flash-message');
+                    const flashContent = document.getElementById('flash-content');
+                    
+                    if (flash.enabled) {
+                        flashDiv.classList.remove('hidden');
+                        flashContent.textContent = flash.text;
+                        flashContent.style.fontSize = flash.size + 'px';
+                        flashDiv.style.backgroundColor = flash.bgColor;
+                        flashDiv.style.color = flash.color;
+                        flashContent.style.animationDuration = flash.speed + 's';
+                    } else {
+                        flashDiv.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading flash message:', error);
+            }
+        }
+
+        async function loadFlashMessageSettings() {
+            try {
+                const docRef = doc(db, 'settings', 'flashMessage');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const flash = docSnap.data();
+                    document.getElementById('flash-text').value = flash.text;
+                    document.getElementById('flash-size').value = flash.size;
+                    document.getElementById('flash-speed').value = flash.speed;
+                    document.getElementById('flash-color').value = flash.color;
+                    document.getElementById('flash-bg-color').value = flash.bgColor;
+                    document.getElementById('flash-enabled').checked = flash.enabled;
+                    updateFlashPreview();
+                }
+            } catch (error) {
+                console.error('Error loading flash message settings:', error);
+            }
+        }
+
+        window.updateFlashPreview = function() {
+            const text = document.getElementById('flash-text').value;
+            const size = document.getElementById('flash-size').value;
+            const color = document.getElementById('flash-color').value;
+            const bgColor = document.getElementById('flash-bg-color').value;
+            const speed = document.getElementById('flash-speed').value;
+            
+            const preview = document.getElementById('flash-preview');
+            preview.textContent = text;
+            preview.style.fontSize = size + 'px';
+            preview.style.color = color;
+            preview.style.backgroundColor = bgColor;
+            preview.style.animationDuration = speed + 's';
+            preview.style.animation = 'scroll-left ' + speed + 's linear infinite';
+            
+            document.getElementById('text-color-preview').style.backgroundColor = color;
+            document.getElementById('bg-color-preview').style.backgroundColor = bgColor;
+        };
+
+        // Add event listeners for real-time preview
+        document.getElementById('flash-text').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-size').addEventListener('change', window.updateFlashPreview);
+        document.getElementById('flash-color').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-bg-color').addEventListener('input', window.updateFlashPreview);
+        document.getElementById('flash-speed').addEventListener('change', window.updateFlashPreview);
+
+        async function loadHomeArticles() {
+            const articlesDiv = document.getElementById('home-articles-list');
+            articlesDiv.innerHTML = '<p>Loading articles...</p>';
+
+            try {
+                const q = query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(6));
+                const snapshot = await getDocs(q);
+                
                 if (snapshot.empty) {
-                    list.innerHTML = '<p style="color: #6b7280; grid-column: 1/-1;">No newsletters available yet.</p>';
+                    articlesDiv.innerHTML = '<p>No articles available yet.</p>';
                     return;
                 }
 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = new Date(data.uploadedAt.toDate()).toLocaleDateString();
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const article = docSnap.data();
+                    const accessLevel = article.accessLevel || 'free';
+                    const hasAccess = canAccessContent(accessLevel);
                     
-                    list.innerHTML += `
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                            <h4 style="color: #1e40af; margin-bottom: 0.5rem;">${data.title}</h4>
-                            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">${data.description || 'No description'}</p>
-                            <p style="color: #9ca3af; font-size: 0.85rem; margin-bottom: 1rem;">📅 ${date}</p>
-                            <a href="${data.fileUrl}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-block; padding: 0.5rem 1rem; background: #f0f9ff; border-radius: 5px; border: 1px solid #bfdbfe;">
-                                📥 Download
-                            </a>
+                    html += `
+                        <div class="card article-card" style="position: relative;" onclick="viewArticle('${docSnap.id}')">
+                            ${getAccessBadgeHTML(accessLevel)}
+                            <div class="article-meta">📰 ${article.category} | ${new Date(article.createdAt).toLocaleDateString()}</div>
+                            <h3>${article.title}</h3>
+                            <p>${article.preview || 'Click to read full article'}</p>
+                            ${!hasAccess ? getLockedOverlayHTML(accessLevel) : ''}
                         </div>
                     `;
                 });
-            }).catch(error => {
-                showFlashMessage('Error loading newsletters: ' + error.message, 5);
-            });
+                
+                articlesDiv.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                articlesDiv.innerHTML = '<p>Error loading articles.</p>';
+            }
         }
 
-        // Handle Flash Message (Admin)
-        function handleFlashMessage(event) {
-            event.preventDefault();
+        async function loadAllArticles() {
+            const articlesDiv = document.getElementById('articles-list');
+            articlesDiv.innerHTML = '<p>Loading articles...</p>';
+
+            try {
+                const q = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    articlesDiv.innerHTML = '<p>No articles available yet.</p>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const article = docSnap.data();
+                    const accessLevel = article.accessLevel || 'free';
+                    const hasAccess = canAccessContent(accessLevel);
+                    
+                    html += `
+                        <div class="card article-card" style="position: relative;" onclick="viewArticle('${docSnap.id}')">
+                            ${getAccessBadgeHTML(accessLevel)}
+                            <div class="article-meta">📰 ${article.category} | ${new Date(article.createdAt).toLocaleDateString()}</div>
+                            <h3>${article.title}</h3>
+                            <p>${article.preview || 'Click to read full article'}</p>
+                            ${!hasAccess ? getLockedOverlayHTML(accessLevel) : ''}
+                        </div>
+                    `;
+                });
+                
+                articlesDiv.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                articlesDiv.innerHTML = '<p>Error loading articles.</p>';
+            }
+        }
+
+        async function loadNewsletters() {
+            const newslettersDiv = document.getElementById('newsletters-list');
+            newslettersDiv.innerHTML = '<p>Loading newsletters...</p>';
+
+            try {
+                const snapshot = await getDocs(collection(db, 'newsletters'));
+                
+                if (snapshot.empty) {
+                    newslettersDiv.innerHTML = '<p>No newsletters available yet.</p>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const newsletter = docSnap.data();
+                    const accessLevel = newsletter.accessLevel || 'free';
+                    const hasAccess = canAccessContent(accessLevel);
+                    
+                    if (hasAccess) {
+                        html += `
+                            <div class="card" style="position: relative;">
+                                ${getAccessBadgeHTML(accessLevel)}
+                                <h3>${newsletter.title}</h3>
+                                <p>${newsletter.description}</p>
+                                <a href="${newsletter.pdfUrl}" target="_blank" class="btn-primary" style="display:inline-block; text-align:center; text-decoration:none;">Download PDF</a>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="card" style="position: relative;">
+                                ${getAccessBadgeHTML(accessLevel)}
+                                <h3>${newsletter.title}</h3>
+                                <p>${newsletter.description}</p>
+                                ${getLockedOverlayHTML(accessLevel)}
+                            </div>
+                        `;
+                    }
+                });
+                
+                newslettersDiv.innerHTML = html || '<p>No newsletters available.</p>';
+            } catch (error) {
+                console.error('Error loading newsletters:', error);
+                newslettersDiv.innerHTML = '<p>Error loading newsletters.</p>';
+            }
+        }
+
+        async function loadIntroduction() {
+            try {
+                const docRef = doc(db, 'settings', 'introduction');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    document.getElementById('intro-text').textContent = docSnap.data().text;
+                }
+            } catch (error) {
+                console.error('Error loading introduction:', error);
+            }
+        }
+
+        window.viewArticle = async function(articleId) {
+            try {
+                const docRef = doc(db, 'articles', articleId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const article = docSnap.data();
+                    const accessLevel = article.accessLevel || 'free';
+                    const hasAccess = canAccessContent(accessLevel);
+                    
+                    if (!hasAccess) {
+                        if (accessLevel === 'subscriber') {
+                            openModal('register-modal');
+                        } else if (accessLevel === 'paid') {
+                            showSubscriptionNotice();
+                        }
+                        return;
+                    }
+                    
+                    const articleView = document.getElementById('article-view');
+                    
+                    articleView.innerHTML = `
+                        <h2>${article.title}</h2>
+                        <div class="article-meta"><strong>Category:</strong> ${article.category}<br><strong>Date:</strong> ${new Date(article.createdAt).toLocaleDateString()}</div>
+                        <div class="article-content">${article.content}</div>
+                    `;
+                    
+                    openModal('article-modal');
+                }
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Error loading article');
+            }
+        };
+
+        // ==========================================
+        // ADMIN FUNCTIONS
+        // ==========================================
+        async function loadAdminContent() {
+            loadCurrentIntro();
+        }
+
+        async function loadCurrentIntro() {
+            try {
+                const docRef = doc(db, 'settings', 'introduction');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    document.getElementById('intro-content').value = docSnap.data().text;
+                }
+            } catch (error) {
+                console.error('Error loading introduction:', error);
+            }
+        }
+
+        async function loadUsers() {
+            const usersDiv = document.getElementById('users-list');
+            usersDiv.innerHTML = '<p>Loading users...</p>';
+
+            try {
+                const snapshot = await getDocs(collection(db, 'users'));
+                
+                if (snapshot.empty) {
+                    usersDiv.innerHTML = '<p>No registered users yet.</p>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const user = docSnap.data();
+                    const level = user.subscriptionLevel || 'subscriber';
+                    const isPaid = level === 'paid';
+                    
+                    html += `
+                        <div class="user-card">
+                            <div class="user-info">
+                                <strong>${user.name}</strong>
+                                ${isPaid ? '<span class="user-badge badge-paid">PAID</span>' : '<span class="user-badge badge-subscriber">SUBSCRIBER</span>'}<br>
+                                ${user.email}<br>
+                                ${user.phone}<br>
+                                <small>Registered: ${new Date(user.registeredAt).toLocaleString()}</small>
+                                ${user.approvedAt ? `<br><small>Approved: ${new Date(user.approvedAt).toLocaleString()}</small>` : ''}
+                            </div>
+                            <div class="user-actions">
+                                ${isPaid ? 
+                                    `<button class="btn-secondary btn-small" onclick="revokeAccess('${docSnap.id}')">Revoke Paid</button>` :
+                                    `<button class="btn-success btn-small" onclick="approvePaid('${docSnap.id}')">Approve as Paid</button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                usersDiv.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading users:', error);
+                usersDiv.innerHTML = '<p>Error loading users.</p>';
+            }
+        }
+
+        window.approvePaid = async function(userId) {
+            if (!isAdmin) return;
             
-            if (!currentUser || currentUser.email !== 'uncover.markets@gmail.com') {
-                showFlashMessage('Admin access denied', 5);
+            if (confirm('Approve this user as a PAID subscriber? They will get access to all premium content.')) {
+                try {
+                    await updateDoc(doc(db, 'users', userId), {
+                        subscriptionLevel: 'paid',
+                        approvedAt: new Date().toISOString()
+                    });
+                    alert('User approved as paid subscriber!');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Error approving user:', error);
+                    alert('Error approving user: ' + error.message);
+                }
+            }
+        };
+
+        window.revokeAccess = async function(userId) {
+            if (!isAdmin) return;
+            
+            if (confirm('Revoke paid subscription? User will return to regular subscriber level.')) {
+                try {
+                    await updateDoc(doc(db, 'users', userId), {
+                        subscriptionLevel: 'subscriber',
+                        approvedAt: null
+                    });
+                    alert('Paid subscription revoked!');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Error revoking access:', error);
+                    alert('Error revoking access: ' + error.message);
+                }
+            }
+        };
+
+        async function loadManageContent() {
+            // Load articles
+            const articlesDiv = document.getElementById('manage-articles-list');
+            articlesDiv.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const snapshot = await getDocs(collection(db, 'articles'));
+                
+                if (snapshot.empty) {
+                    articlesDiv.innerHTML = '<p>No articles to manage.</p>';
+                } else {
+                    let html = '';
+                    snapshot.forEach(docSnap => {
+                        const article = docSnap.data();
+                        const accessLevel = article.accessLevel || 'free';
+                        html += `
+                            <div class="card">
+                                <h4>${article.title}</h4>
+                                <p>${article.category} | ${new Date(article.createdAt).toLocaleDateString()} | Access: <strong>${accessLevel.toUpperCase()}</strong></p>
+                                <button class="btn-danger btn-small" onclick="deleteArticle('${docSnap.id}')">Delete</button>
+                            </div>
+                        `;
+                    });
+                    articlesDiv.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading articles:', error);
+            }
+
+            // Load newsletters
+            const newslettersDiv = document.getElementById('manage-newsletters-list');
+            newslettersDiv.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const snapshot = await getDocs(collection(db, 'newsletters'));
+                
+                if (snapshot.empty) {
+                    newslettersDiv.innerHTML = '<p>No newsletters to manage.</p>';
+                } else {
+                    let html = '';
+                    snapshot.forEach(docSnap => {
+                        const newsletter = docSnap.data();
+                        const accessLevel = newsletter.accessLevel || 'free';
+                        html += `
+                            <div class="card">
+                                <h4>${newsletter.title}</h4>
+                                <p>Access: <strong>${accessLevel.toUpperCase()}</strong></p>
+                                <button class="btn-danger btn-small" onclick="deleteNewsletter('${docSnap.id}')">Delete</button>
+                            </div>
+                        `;
+                    });
+                    newslettersDiv.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading newsletters:', error);
+            }
+        }
+
+        // ==========================================
+        // ADMIN FORM HANDLERS
+        // ==========================================
+        document.getElementById('add-article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
                 return;
             }
 
-            const message = document.getElementById('flashContent').value;
-            const duration = parseInt(document.getElementById('flashDuration').value);
+            const title = document.getElementById('article-title').value;
+            const category = document.getElementById('article-category').value;
+            const content = quillEditor.root.innerHTML;
+            const accessLevel = document.querySelector('input[name="article-access"]:checked').value;
 
-            showFlashMessage(message, duration);
-            event.target.reset();
-        }
+            const plainText = quillEditor.getText().substring(0, 150);
 
-        // Initialize: Show home section
-        document.addEventListener('DOMContentLoaded', () => {
-            showSection('home');
-            
-            // Register service worker for PWA
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw-with-photo-flash.js').catch(err => {
-                    console.log('Service Worker registration failed:', err);
+            try {
+                await addDoc(collection(db, 'articles'), {
+                    title,
+                    category,
+                    content,
+                    preview: plainText,
+                    accessLevel,
+                    createdAt: Date.now(),
+                    author: currentUser.email
                 });
+
+                alert('Article published successfully!');
+                e.target.reset();
+                quillEditor.setContents([]);
+                loadHomeArticles();
+            } catch (error) {
+                console.error('Error adding article:', error);
+                alert('Error publishing article: ' + error.message);
             }
         });
 
-        // Close auth modal when clicking outside
-        document.getElementById('authModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeAuthModal();
+        document.getElementById('add-newsletter-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            const title = document.getElementById('newsletter-title').value;
+            const description = document.getElementById('newsletter-description').value;
+            const pdfUrl = document.getElementById('newsletter-pdf-link').value;
+            const accessLevel = document.querySelector('input[name="newsletter-access"]:checked').value;
+
+            try {
+                await addDoc(collection(db, 'newsletters'), {
+                    title,
+                    description,
+                    pdfUrl,
+                    accessLevel,
+                    createdAt: Date.now(),
+                    author: currentUser.email
+                });
+
+                alert('Newsletter published successfully!');
+                e.target.reset();
+            } catch (error) {
+                console.error('Error adding newsletter:', error);
+                alert('Error publishing newsletter: ' + error.message);
             }
         });
+
+        document.getElementById('upload-photo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            if (!selectedPhotoFile) {
+                alert('Please select a photo');
+                return;
+            }
+
+            try {
+                const photoUrl = await uploadPhotoToStorage(selectedPhotoFile);
+
+                await setDoc(doc(db, 'settings', 'adminPhoto'), {
+                    photoUrl,
+                    uploadedAt: new Date().toISOString()
+                });
+
+                alert('Photo uploaded successfully!');
+                e.target.reset();
+                selectedPhotoFile = null;
+                document.getElementById('photo-file-name').textContent = '';
+                document.getElementById('admin-photo-file').value = '';
+                loadCurrentPhoto();
+                loadAdminPhoto();
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Error uploading photo: ' + error.message);
+            }
+        });
+
+        document.getElementById('flash-message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            const text = document.getElementById('flash-text').value;
+            const size = document.getElementById('flash-size').value;
+            const speed = document.getElementById('flash-speed').value;
+            const color = document.getElementById('flash-color').value;
+            const bgColor = document.getElementById('flash-bg-color').value;
+            const enabled = document.getElementById('flash-enabled').checked;
+
+            try {
+                await setDoc(doc(db, 'settings', 'flashMessage'), {
+                    text,
+                    size: parseInt(size),
+                    speed: parseInt(speed),
+                    color,
+                    bgColor,
+                    enabled
+                });
+
+                alert('Flash message saved successfully!');
+                await loadFlashMessage();
+            } catch (error) {
+                console.error('Error saving flash message:', error);
+                alert('Error saving flash message: ' + error.message);
+            }
+        });
+
+        document.getElementById('update-intro-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            const text = document.getElementById('intro-content').value;
+
+            try {
+                await setDoc(doc(db, 'settings', 'introduction'), {
+                    text,
+                    updatedAt: Date.now()
+                });
+
+                alert('Introduction updated successfully!');
+                loadIntroduction();
+            } catch (error) {
+                console.error('Error updating introduction:', error);
+                alert('Error updating introduction: ' + error.message);
+            }
+        });
+
+        window.deleteArticle = async function(articleId) {
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this article?')) {
+                try {
+                    await deleteDoc(doc(db, 'articles', articleId));
+                    alert('Article deleted successfully!');
+                    loadManageContent();
+                    loadHomeArticles();
+                } catch (error) {
+                    console.error('Error deleting article:', error);
+                    alert('Error deleting article: ' + error.message);
+                }
+            }
+        };
+
+        window.deleteNewsletter = async function(newsletterId) {
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this newsletter?')) {
+                try {
+                    await deleteDoc(doc(db, 'newsletters', newsletterId));
+                    alert('Newsletter deleted successfully!');
+                    loadManageContent();
+                } catch (error) {
+                    console.error('Error deleting newsletter:', error);
+                    alert('Error deleting newsletter: ' + error.message);
+                }
+            }
+        };
+
+        // Initialize on load
+        showHome();
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration);
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000);
+                    })
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
     </script>
 </body>
 </html>
