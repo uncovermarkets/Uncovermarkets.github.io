@@ -1527,6 +1527,7 @@
         // ==========================================
         // COACHING SECTION
         // ==========================================
+        
         window.showCoaching = function() {
             // Hide other sections
             document.getElementById('home-articles').style.display = 'none';
@@ -1554,20 +1555,28 @@
                     const coaching = docSnap.data();
                     const accessLevel = coaching.accessLevel || 'free';
                     
-                    if (!canAccessContent(accessLevel)) {
+                    // Check if current user can access this content
+                    const hasAccess = canAccessContent(accessLevel);
+                    
+                    if (hasAccess) {
+                        // User has access - show full content
+                        coachingSection.innerHTML = `
+                            <h2 class="section-title">${coaching.title || 'Coaching'}</h2>
+                            ${getAccessBadgeHTML(accessLevel)}
+                            <div style="margin-top: 1rem;">
+                                ${coaching.description || 'Coaching content coming soon.'}
+                            </div>
+                        `;
+                    } else {
+                        // User doesn't have access - show locked overlay
                         coachingSection.innerHTML = `
                             <h2 class="section-title">${coaching.title || 'Coaching'}</h2>
                             ${getAccessBadgeHTML(accessLevel)}
                             ${getLockedOverlayHTML(accessLevel)}
                         `;
-                    } else {
-                        coachingSection.innerHTML = `
-                            <h2 class="section-title">${coaching.title || 'Coaching'}</h2>
-                            ${getAccessBadgeHTML(accessLevel)}
-                            <div>${coaching.description || 'Coaching content coming soon.'}</div>
-                        `;
                     }
                 } else {
+                    // No coaching data saved yet
                     coachingSection.innerHTML = `
                         <h2 class="section-title">Coaching</h2>
                         <p>Welcome to the Coaching section!</p>
@@ -1579,7 +1588,7 @@
                 console.error('Error loading coaching section:', error);
                 coachingSection.innerHTML = `
                     <h2 class="section-title">Coaching</h2>
-                    <p>Error loading coaching section.</p>
+                    <p>Error loading coaching section. Please try again later.</p>
                 `;
             });
             
