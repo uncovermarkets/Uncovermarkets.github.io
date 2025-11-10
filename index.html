@@ -2199,6 +2199,38 @@
                 console.error('Error loading coaching info:', error);
             }
         }
+        // Event listener for updating coaching form
+        const coachingForm = document.getElementById('update-coaching-form');
+        if (coachingForm) {
+            coachingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!isAdmin) {
+                    alert('Admin access required');
+                    return;
+                }
+                
+                const title = document.getElementById('coaching-title').value;
+                const description = document.getElementById('coaching-description').value;
+                const accessLevel = document.querySelector('input[name="coaching-access"]:checked').value;
+                
+                try {
+                    await setDoc(doc(db, 'settings', 'coaching'), {
+                        title,
+                        description,
+                        accessLevel,
+                        updatedAt: new Date().toISOString()
+                    });
+                    
+                    alert('Coaching information saved successfully!');
+                    loadCoachingInfo();
+                } catch (error) {
+                    console.error('Error saving coaching info:', error);
+                    alert('Error saving coaching information: ' + error.message);
+                }
+            });
+        }
+
         
         document.getElementById('update-coaching-form').addEventListener('submit', async (e) => {
             e.preventDefault();
