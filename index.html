@@ -1487,6 +1487,36 @@
             document.getElementById('newsletter-subscribe').classList.add('hidden');
             loadNewsletters();
         };
+        // ==========================================
+        // COACHING SECTION
+        // ==========================================
+        window.showCoaching = function() {
+            // Hide other sections
+            document.getElementById('home-articles').style.display = 'none';
+            document.getElementById('articles-section').classList.add('hidden');
+            document.getElementById('newsletters-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            
+            // Create and show coaching section
+            let coachingSection = document.getElementById('coaching-section');
+            
+            if (!coachingSection) {
+                coachingSection = document.createElement('section');
+                coachingSection.id = 'coaching-section';
+                coachingSection.classList.add('card');
+                coachingSection.innerHTML = `
+                    <h2 class="section-title">Coaching</h2>
+                    <p>Welcome to the Coaching section!</p>
+                    <p>Here you can find coaching materials, guidance, and educational resources.</p>
+                    <p><strong>Coming Soon...</strong></p>
+                    <p>For coaching inquiries, contact us at: <strong>uncover.markets@gmail.com</strong></p>
+                `;
+                document.querySelector('.container').insertBefore(coachingSection, document.getElementById('home-articles'));
+            }
+            
+            coachingSection.classList.remove('hidden');
+            coachingSection.scrollIntoView({ behavior: 'smooth' });
+        };
 
         window.showAdmin = function() {
             if (!isAdmin) {
