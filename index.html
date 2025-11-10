@@ -714,7 +714,6 @@
         <div class="container">
             <h2>Welcome to Uncover Markets</h2>
             <p>Your source for stock market analysis and insights</p>
-            <p>Contact WA @7827384962 and uncover.markets@gmail.com</p>
         </div>
     </div>
 
@@ -738,7 +737,7 @@
 
         <!-- Newsletter Subscribe -->
         <section id="newsletter-subscribe" class="card">
-            <h3>Subscribe to our newsletter for daily market insights about sectors, crypto, oil etc. directly in your inbox.This is only for analysis - NOT A RECOMMENDATION. </h3>
+            <h3>Subscribe to our newsletter for daily market insights, stock analysis, and investment tips directly in your inbox.</h3>
         </section>
 
         <!-- Latest Articles -->
@@ -772,7 +771,6 @@
                 <button class="admin-tab" onclick="showAdminTab('update-intro')">Update Introduction</button>
                 <button class="admin-tab" onclick="showAdminTab('manage-users')">Manage Users</button>
                 <button class="admin-tab" onclick="showAdminTab('manage-content')">Manage Content</button>
-                <button class="admin-tab" onclick="showAdminTab('manage-coaching')">Manage Coaching</button>
             </div>
 
             <!-- Add Article Tab -->
@@ -968,42 +966,6 @@
                 <h4 style="margin-top: 2rem;">Newsletters</h4>
                 <div id="manage-newsletters-list"></div>
             </div>
-            <!-- Manage Coaching Tab -->
-            <div id="manage-coaching-tab" class="admin-content card">
-                <h3>Manage Coaching Section</h3>
-                
-                <h4>Update Coaching Description</h4>
-                <form id="update-coaching-form">
-                    <div class="form-group">
-                        <label>Coaching Title</label>
-                        <input type="text" id="coaching-title" placeholder="e.g., Market Analysis Coaching" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Coaching Description/Content</label>
-                        <textarea id="coaching-description" placeholder="Enter coaching details, schedule, and information..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><strong>Access Level</strong></label>
-                        <div>
-                            <label><input type="radio" name="coaching-access" value="free" checked> Free - Everyone can access</label>
-                        </div>
-                        <div>
-                            <label><input type="radio" name="coaching-access" value="subscriber"> Registered Subscribers Only</label>
-                        </div>
-                        <div>
-                            <label><input type="radio" name="coaching-access" value="paid"> Paid Subscribers Only</label>
-                        </div>
-                    </div>
-                    
-                    <button type="submit">Save Coaching Info</button>
-                </form>
-                
-                <h4 style="margin-top: 2rem;">Current Coaching Info</h4>
-                <div id="current-coaching-display"></div>
-            </div>
-
         </section>
     </div>
 
@@ -1338,7 +1300,6 @@
                         <a href="#" onclick="showHome()">Home</a>
                         <a href="#" onclick="showArticles()">Articles</a>
                         <a href="#" onclick="showNewsletters()">Newsletters</a>
-                        <a href="#" onclick="showCoaching()">Coaching</a>
                         ${isAdmin ? '<a href="#" onclick="showAdmin()">Admin</a>' : ''}
                     </div>
                     <div>
@@ -1352,7 +1313,6 @@
                         <a href="#" onclick="showHome()">Home</a>
                         <button onclick="openModal('login-modal')">Login</button>
                         <button onclick="openModal('register-modal')">Register</button>
-                        <a href="#" onclick="showCoaching()">Coaching</a>
                     </div>
                 `;
             }
@@ -1524,77 +1484,6 @@
             document.getElementById('newsletter-subscribe').classList.add('hidden');
             loadNewsletters();
         };
-        // ==========================================
-        // COACHING SECTION
-        // ==========================================
-        
-        window.showCoaching = function() {
-            // Hide other sections
-            document.getElementById('home-articles').style.display = 'none';
-            document.getElementById('articles-section').classList.add('hidden');
-            document.getElementById('newsletters-section').classList.add('hidden');
-            document.getElementById('admin-section').classList.add('hidden');
-            document.getElementById('about-section').classList.add('hidden');
-            document.getElementById('newsletter-subscribe').classList.add('hidden');
-            
-            let coachingSection = document.getElementById('coaching-section');
-            
-            if (!coachingSection) {
-                coachingSection = document.createElement('section');
-                coachingSection.id = 'coaching-section';
-                coachingSection.classList.add('card');
-                document.querySelector('.container').insertBefore(coachingSection, document.getElementById('home-articles'));
-            }
-            
-            coachingSection.classList.remove('hidden');
-            
-            // Load coaching data from Firestore
-            const docRef = doc(db, 'settings', 'coaching');
-            getDoc(docRef).then(docSnap => {
-                if (docSnap.exists()) {
-                    const coaching = docSnap.data();
-                    const accessLevel = coaching.accessLevel || 'free';
-                    
-                    // Check if current user can access this content
-                    const hasAccess = canAccessContent(accessLevel);
-                    
-                    if (hasAccess) {
-                        // User has access - show full content
-                        coachingSection.innerHTML = `
-                            <h2 class="section-title">${coaching.title || 'Coaching'}</h2>
-                            ${getAccessBadgeHTML(accessLevel)}
-                            <div style="margin-top: 1rem;">
-                                ${coaching.description || 'Coaching content coming soon.'}
-                            </div>
-                        `;
-                    } else {
-                        // User doesn't have access - show locked overlay
-                        coachingSection.innerHTML = `
-                            <h2 class="section-title">${coaching.title || 'Coaching'}</h2>
-                            ${getAccessBadgeHTML(accessLevel)}
-                            ${getLockedOverlayHTML(accessLevel)}
-                        `;
-                    }
-                } else {
-                    // No coaching data saved yet
-                    coachingSection.innerHTML = `
-                        <h2 class="section-title">Coaching</h2>
-                        <p>Welcome to the Coaching section!</p>
-                        <p><strong>Coming Soon...</strong></p>
-                        <p>For coaching inquiries, contact us at: <strong>uncover.markets@gmail.com</strong></p>
-                    `;
-                }
-            }).catch(error => {
-                console.error('Error loading coaching section:', error);
-                coachingSection.innerHTML = `
-                    <h2 class="section-title">Coaching</h2>
-                    <p>Error loading coaching section. Please try again later.</p>
-                `;
-            });
-            
-            coachingSection.scrollIntoView({ behavior: 'smooth' });
-        };
-
 
         window.showAdmin = function() {
             if (!isAdmin) {
@@ -1636,8 +1525,6 @@
                 loadUsers();
             } else if (tabName === 'manage-content') {
                 loadManageContent();
-            } else if (tabName === 'manage-coaching') {
-                loadCoachingInfo();
             } else if (tabName === 'update-intro') {
                 loadCurrentIntro();
             }
@@ -1651,7 +1538,6 @@
             await loadIntroduction();
             await loadFlashMessage();
             await loadAdminPhoto();
-            await loadCoachingInfo();
         }
 
         async function loadAdminPhoto() {
@@ -2174,102 +2060,6 @@
             }
         });
 
-        // ==========================================
-        // COACHING MANAGEMENT FUNCTIONS
-        // ==========================================
-        
-        async function loadCoachingInfo() {
-            try {
-                const docRef = doc(db, 'settings', 'coaching');
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const coaching = docSnap.data();
-                    document.getElementById('coaching-title').value = coaching.title || '';
-                    document.getElementById('coaching-description').value = coaching.description || '';
-                    document.querySelectorAll('input[name="coaching-access"]').forEach(input => {
-                        input.checked = (input.value === (coaching.accessLevel || 'free'));
-                    });
-                    
-                    // Display current coaching info
-                    const accessLevel = coaching.accessLevel || 'free';
-                    document.getElementById('current-coaching-display').innerHTML = `
-                        <div class="card">
-                            <strong>Title:</strong> ${coaching.title || 'Not set'}<br>
-                            <strong>Description:</strong> ${coaching.description || 'Not set'}<br>
-                            <strong>Access Level:</strong> ${accessLevel.toUpperCase()}<br>
-                            <small>Last updated: ${coaching.updatedAt ? new Date(coaching.updatedAt).toLocaleString() : 'Never'}</small>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('current-coaching-display').innerHTML = '<p>No coaching info set yet.</p>';
-                }
-            } catch (error) {
-                console.error('Error loading coaching info:', error);
-            }
-        }
-        // Event listener for updating coaching form
-        const coachingForm = document.getElementById('update-coaching-form');
-        if (coachingForm) {
-            coachingForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                if (!isAdmin) {
-                    alert('Admin access required');
-                    return;
-                }
-                
-                const title = document.getElementById('coaching-title').value;
-                const description = document.getElementById('coaching-description').value;
-                const accessLevel = document.querySelector('input[name="coaching-access"]:checked').value;
-                
-                try {
-                    await setDoc(doc(db, 'settings', 'coaching'), {
-                        title,
-                        description,
-                        accessLevel,
-                        updatedAt: new Date().toISOString()
-                    });
-                    
-                    alert('Coaching information saved successfully!');
-                    loadCoachingInfo();
-                } catch (error) {
-                    console.error('Error saving coaching info:', error);
-                    alert('Error saving coaching information: ' + error.message);
-                }
-            });
-        }
-
-        
-        document.getElementById('update-coaching-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!isAdmin) {
-                alert('Admin access required');
-                return;
-            }
-            
-            const title = document.getElementById('coaching-title').value;
-            const description = document.getElementById('coaching-description').value;
-            const accessLevel = document.querySelector('input[name="coaching-access"]:checked').value;
-            
-            try {
-                await setDoc(doc(db, 'settings', 'coaching'), {
-                    title,
-                    description,
-                    accessLevel,
-                    updatedAt: new Date().toISOString()
-                });
-                
-                alert('Coaching information saved successfully!');
-                loadCoachingInfo();
-            } catch (error) {
-                console.error('Error saving coaching info:', error);
-                alert('Error saving coaching information: ' + error.message);
-            }
-        });
-
-
         document.getElementById('upload-photo-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -2417,11 +2207,5 @@
             });
         }
     </script>
-    <!-- Add before closing </body> tag -->
-<script src="/app.js"></script>
-<script src="/navbar-scroll-manager.js"></script>
-<!-- External dependencies -->
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
 </body>
 </html>
