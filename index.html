@@ -1437,6 +1437,16 @@
                     approvedAt: null
                 });
 
+                    // **ADD THIS BLOCK RIGHT AFTER SAVING DOC**
+                    await sendEmailVerification(userCredential.user);
+                    messageDiv.innerHTML = `<div class="alert alert-success">Registration successful! Check your email to verify your address.</div>`;
+                    setTimeout(() => closeModal('register-modal'), 2000);
+                  } catch (error) {
+                    console.error("Registration error:", error);
+                    messageDiv.innerHTML = `<div class="alert alert-error">Registration failed: ${error.message}</div>`;
+                  }
+                });
+
                 messageDiv.innerHTML = '<div class="alert alert-success">Registration successful! You now have access to subscriber content.</div>';
                 setTimeout(() => closeModal('register-modal'), 2000);
             } catch (error) {
